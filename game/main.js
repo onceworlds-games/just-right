@@ -54,9 +54,9 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 async function boot() {
   const ow = window.onceworlds || null;
-  const dev = !ow || ow.mode !== 'production';
-  const autoplay = dev && params.get('autoplay') === '1';
-  const autoTo = dev ? params.get('autoplay-to') : null;
+  // ?autoplay=1: the bot brain plays for this player (the platform's pictures and the trailer); ?autoplay-to=lobby stops there.
+  const autoplay = params.get('autoplay') === '1';
+  const autoTo = params.get('autoplay-to');
   // Join first, before anything is built, so a reload keeps its seat.
   const joinRoom = () => (ow && ow.rooms && ow.rooms.join ? Promise.resolve(ow.rooms.join(JOIN_OPTIONS)).catch(() => null) : Promise.resolve(null));
   const joining = joinRoom();
