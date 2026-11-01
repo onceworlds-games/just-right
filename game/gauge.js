@@ -212,6 +212,13 @@ export function drawGauge(ctx, g, o) {
     else rr(ctx, Math.min(a, b), g.y - 2, Math.abs(b - a), g.h + 4, 4);
     ctx.stroke();
     ctx.restore();
+    // A ghost of the needle through the cloud: enough to judge by, never as plain as in clear weather.
+    if (!o.dim) {
+      ctx.save();
+      ctx.globalAlpha = 0.3;
+      drawIndicator();
+      ctx.restore();
+    }
   }
   // Outline over it all, then the end caps.
   rr(ctx, g.x, g.y, g.w, g.h, thick / 2);

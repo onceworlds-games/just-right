@@ -1287,7 +1287,8 @@ async function boot() {
       const LL = drawLobbyScreen(now, clear);
       specs = lobbyButtons(LL);
       // First visits: where Ready is.
-      if (room && online && profile.readied < 2 && !room.me?.ready) {
+      // (A private server's host starts it instead: no hint there.)
+      if (room && online && profile.readied < 2 && !room.me?.ready && (room.kind === 'public' || !room.isHost)) {
         readyHint += 1;
         const y = H - Math.max(clear.bottom, 88) - (small ? 18 : 26);
         const bob = fx.reduced ? 0 : Math.sin(clock * 4) * 4;
