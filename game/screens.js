@@ -146,7 +146,8 @@ export function drawScoreSign(ctx, r, big, small, mult) {
 export function drawIntro(ctx, L, W, { name, page, twist, x2, hint, age, reduced }) {
   const fade = age < 1.2 ? 1 : clamp01(1 - (age - 1.2) / 0.4);
   if (fade <= 0) return;
-  const k = reduced ? 1 : easeBack(age / 0.28);
+  // It slams in from 40% of its size (never from a speck: text stays readable on every frame).
+  const k = reduced ? 1 : 0.4 + 0.6 * easeBack(age / 0.28);
   const size = Math.min(fitSize(ctx, name, L.small ? 40 : 64, W * 0.8), L.small ? 40 : 64);
   const y = L.top + size * 0.75;
   ctx.save();
@@ -395,7 +396,7 @@ export function drawCountdown(ctx, W, H, countdown, reduced) {
   if (n > 3) return;
   const frac = 1 - (countdown - (n - 1));
   const kind = n === 3 ? 'papa' : n === 2 ? 'mama' : 'baby';
-  const k = reduced ? 1 : easeBack(frac / 0.25);
+  const k = reduced ? 1 : 0.4 + 0.6 * easeBack(frac / 0.25);
   const R = Math.min(W, H) * 0.16;
   const cx = W / 2;
   const cy = H * 0.42;
