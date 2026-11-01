@@ -56,8 +56,8 @@ async function boot() {
   const ow = window.onceworlds || null;
   // ?autoplay=1: the bot brain plays for this player (the platform's pictures and the trailer); ?autoplay-to=lobby stops there.
   const autoplay = params.get('autoplay') === '1';
-  // ?clumsy=1: a careless hand instead (late, and the odd blunder), for footage of the pages going wrong.
-  const AUTO = params.get('clumsy') === '1' ? { skill: 0.3, bias: 90, press: [0.3, 0.6], blunder: 4 } : AUTOPLAY;
+  // ?clumsy=1: a careless hand instead (it lets go late, so most pages go too far), for footage of the pages going wrong.
+  const AUTO = params.get('clumsy') === '1' ? { skill: 0.3, bias: 380, press: [0.3, 0.6], blunder: 0 } : AUTOPLAY;
   const autoTo = params.get('autoplay-to');
   // Join first, before anything is built, so a reload keeps its seat.
   const joinRoom = () => (ow && ow.rooms && ow.rooms.join ? Promise.resolve(ow.rooms.join(JOIN_OPTIONS)).catch(() => null) : Promise.resolve(null));

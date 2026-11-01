@@ -141,7 +141,7 @@ function porridge(ctx, S) {
   ctx.fill();
   // The porridge: colder is greyer and skinned over, hotter is golden and bubbling.
   const d = S.v - S.c;
-  const cold = S.k === 'under' || (S.k === 'asleep' && true);
+  const cold = S.k === 'under' || S.k === 'asleep';
   const surf = cold ? '#C9CED6' : ramp([[-0.4, '#E9DEC4'], [0, '#EFC56A'], [0.3, '#E9A23C']], d);
   ellipse(ctx, 0, py + u * 0.05, pw * 0.5, u * 0.3, T.redDark);
   ellipse(ctx, 0, py + u * 0.08, pw * 0.44, u * 0.22, surf);
@@ -482,14 +482,12 @@ function balloon(ctx, S) {
   ctx.lineWidth = u * 0.12;
   ctx.beginPath();
   ctx.moveTo(B.pumpX + u * 0.35, B.fy - u * 0.4);
-  ctx.quadraticCurveTo(B.bx - u * 0.6, B.fy + u * 0.2, B.bx, B.fy - u * 1.15 - (floatUp ? 99999 : 0) * 0);
+  ctx.quadraticCurveTo(B.bx - u * 0.6, B.fy + u * 0.2, B.bx, B.fy - u * 1.15);
   ctx.stroke();
   // Goldilocks on the pump.
   const s = (u * 4.3) / 170;
   const gx = B.pumpX - u * 1.1;
-  const reach = Math.atan2(u * 1.1, hy - (B.fy - 45 * s - 44 * s));
   drawGirl(ctx, gx, B.fy - 45 * s + stroke * u * 0.2, s, { armL: 1.2 + stroke * 0.35, armR: 1.35 + stroke * 0.35, crouch: stroke * 0.25, face: popped ? 'shock' : faceFor(S), look: 2 });
-  void reach;
   if (S.k === 'asleep') zzz(ctx, gx + u * 0.4, B.fy - 175 * s, u, t);
   if (popped) {
     const k = S.since;
@@ -790,6 +788,7 @@ function cake(ctx, S) {
 }
 
 function cakeBurst(fx, S) {
+  if (S.k === 'asleep') return;
   fx.burst('crumb', S.gx(S.v), S.floor - S.u * 1.2, 10, { speed: S.u * 3 });
 }
 
@@ -1175,7 +1174,7 @@ function porridgeBurst(fx, S) {
 function toastBurst(fx, S) {
   const cx = S.box.x + S.box.w * 0.55;
   if (S.k === 'over') fx.burst('smoke', cx, S.floor - S.u * 5, 10, { speed: S.u * 2 });
-  else fx.burst('crumb', cx, S.floor - S.u * 4.5, 6, { speed: S.u * 2 });
+  else if (S.k !== 'asleep') fx.burst('crumb', cx, S.floor - S.u * 4.5, 6, { speed: S.u * 2 });
 }
 
 function milkBurst(fx, S) {

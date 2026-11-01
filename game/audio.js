@@ -92,7 +92,7 @@ function noise(at, dur, gain, { type = 'bandpass', freq = 1000, q = 1, to = null
   g.gain.exponentialRampToValueAtTime(gain, at + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
   src.connect(f).connect(g).connect(dest);
-  src.start(at, Math.random() * 1.5);
+  src.start(at, Math.random() * Math.max(0, 1.9 - dur));
   src.stop(at + dur + 0.05);
 }
 

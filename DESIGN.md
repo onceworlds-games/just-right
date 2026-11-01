@@ -59,7 +59,7 @@ duration. You learn each object's **motion**, not a number.
 | 2 | `chair` | Little Chair | Hold to sit | Falls like gravity, v = (e / 2.6)², at half speed inside the band (the cushion) | 0.55-0.75 | TOO HIGH / CRACK! |
 | 3 | `pillow` | Pillow | Hold to fluff | In pumps: every 0.4 s a pump adds 0.10, eased over 0.28 s | 0.40-0.70 (on a pump) | TOO FLAT / TOO FLUFFY |
 | 4 | `toast` | Toast | Hold to toast | Slow and steady: v = e / 4.4 (the bread goes pale → golden → brown → black) | 0.45-0.70 | TOO PALE / BURNT! |
-| 5 | `balloon` | Balloon | Hold to pump | Fast then slow: v = 1 − (1 − e/3)²; **pops** at the band's edge + 0.03 (0 points) | 0.50-0.70 | TOO SMALL / POP! |
+| 5 | `balloon` | Balloon | Hold to pump | Fast then slow: v = 1 − (1 − e/3)²; **pops** at the band's edge + 0.03 (0 points) | 0.50-0.70 | TOO SMALL / TOO BIG / POP! |
 | 6 | `cake` | Cake | Hold to slice | Fast and steady: the knife crosses the cake in 2.2 s (the gauge runs sideways under it) | 0.40-0.60 | TOO SHORT / TOO FAR |
 | 7 | `spoon` | Cool the Spoon | Hold to blow | Falls fast then slow: v = (1 − e/3)² (the gauge goes **down**) | 0.28-0.50 | TOO COLD / TOO HOT |
 | 8 | `milk` | Milk | Hold to pour | Starts 0.25 s late, then v = (e − 0.25) / 3; after letting go the milk in the air still lands (+0.06) | 0.45-0.75 | TOO LITTLE / SPILLED! |

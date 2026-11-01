@@ -23,7 +23,7 @@ export const PAGES = [
   { id: 'chair', name: 'Little Chair', cue: 'Hold to sit', axis: 'down', set: 'easy', band: [0.55, 0.75], under: 'TOO HIGH', over: 'CRACK!', full: 3.0, twists: [FOGGY, WOBBLY] },
   { id: 'pillow', name: 'Pillow', cue: 'Hold to fluff', axis: 'up', set: 'easy', band: [0.4, 0.7], under: 'TOO FLAT', over: 'TOO FLUFFY', full: 3.9, twists: [FOGGY], steps: 0.1 },
   { id: 'toast', name: 'Toast', cue: 'Hold to toast', axis: 'up', set: 'easy', band: [0.45, 0.7], under: 'TOO PALE', over: 'BURNT!', full: 4.4, twists: [MOVING, FOGGY, WOBBLY] },
-  { id: 'balloon', name: 'Balloon', cue: 'Hold to pump', axis: 'up', set: 'easy', band: [0.5, 0.7], under: 'TOO SMALL', over: 'POP!', full: 3.0, twists: [], pops: true },
+  { id: 'balloon', name: 'Balloon', cue: 'Hold to pump', axis: 'up', set: 'easy', band: [0.5, 0.7], under: 'TOO SMALL', over: 'TOO BIG', full: 3.0, twists: [], pops: true },
   { id: 'cake', name: 'Cake', cue: 'Hold to slice', axis: 'right', set: 'mid', band: [0.4, 0.6], under: 'TOO SHORT', over: 'TOO FAR', full: 2.2, twists: [MOVING, WOBBLY] },
   { id: 'spoon', name: 'Cool the Spoon', cue: 'Hold to blow', axis: 'up', set: 'mid', band: [0.28, 0.5], under: 'TOO COLD', over: 'TOO HOT', full: 3.0, twists: [MOVING, FOGGY, WOBBLY], falls: true },
   { id: 'milk', name: 'Milk', cue: 'Hold to pour', axis: 'up', set: 'late', band: [0.45, 0.75], under: 'TOO LITTLE', over: 'SPILLED!', full: 3.25, twists: [MOVING, FOGGY, WOBBLY], lag: true, hint: 'It keeps pouring!' },
