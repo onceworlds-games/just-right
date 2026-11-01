@@ -116,6 +116,17 @@ function lobby(ctx, W, H) {
 }
 
 /** The solo screens, with where their buttons go outlined (to check a layout; not store art). */
+/** "page-jar" (before the press) or "page-jar-40" (held, the gauge at 0.40): one page laid out as in a match, to check it. */
+function page(ctx, W, H, id, at) {
+  const P = readPage({ g: id, c: 500, w: 100, sp: 100, tw: 0, ph: 0, n: 1 });
+  if (!P) return;
+  const hud = hudLayout(W, H, []);
+  const L = stageLayout(W, H, hud.bottom, P.page.axis);
+  const held = at !== null;
+  const v = held ? at / 100 : P.page.falls ? 1 : 0;
+  drawPage(ctx, W, H, 1, P, L, { v, c: 0.5, holding: held, pressed: held, held: held ? 1200 : 0, t: 1 });
+}
+
 function solo(ctx, W, H, which) {
   const small = Math.min(W, H) < 500;
   const top = Math.max(70 + 10, 24);
@@ -376,6 +387,10 @@ export async function runPoster(full) {
   else if (name === 'lobby') lobby(ctx, W, H);
   else if (name === 'runover' || name === 'daily' || name === 'shelf') solo(ctx, W, H, name);
   else if (name.startsWith('badge-')) badge(ctx, W, name.slice(6));
+  else if (/^page-[a-z]+(-\d{1,3})?$/.test(name)) {
+    const [, id, at] = /^page-([a-z]+)(?:-(\d+))?$/.exec(name);
+    page(ctx, W, H, id, at === undefined ? null : Number(at));
+  }
   else cover(ctx, W, H, fx);
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   document.body.dataset.ready = '1';

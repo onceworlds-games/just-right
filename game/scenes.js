@@ -858,9 +858,12 @@ function jarGeom(S) {
   const { u } = S;
   const fy = S.floor;
   const pivotX = S.gx(0.5);
-  const span = Math.abs(S.gx(0.92) - pivotX);
-  const L = Math.max(span * 1.25, (fy - S.box.y) * 0.75);
-  const pivotY = S.box.y + (fy - S.box.y) * 0.62 - L;
+  const lowY = S.box.y + (fy - S.box.y) * 0.62;
+  // A rope long enough that the ends of the swing stay well inside the stage (on a wide screen it hangs from above it).
+  const dx = Math.abs(S.gx(0) - pivotX);
+  const rise = Math.max(u, (lowY - S.box.y - u * 1.4) * 0.7);
+  const L = Math.max((dx * dx + rise * rise) / (2 * rise), (fy - S.box.y) * 0.75);
+  const pivotY = lowY - L;
   return { pivotX, pivotY, L, fy, crateY: fy - u * 0.9 };
 }
 
@@ -1099,7 +1102,10 @@ function swing(ctx, S) {
   const e = S.e;
   const amp = Math.min(1, 0.275 + 0.125 * e);
   const phase = S.pressed ? 0.5 - 0.5 * Math.cos(Math.PI * e) : 0;
-  const theta = S.pressed ? lerp(-0.25 - amp * 0.4, 0.15 + amp * 0.85, phase) : -0.25 + Math.sin(t * 1.2) * 0.04;
+  // Never so far back that she leaves the page.
+  const back = Math.asin(clamp01((W.pivot.x - u * 0.9) / W.L));
+  const lo = -Math.min(0.25 + amp * 0.4, back);
+  const theta = S.pressed ? lerp(lo, 0.15 + amp * 0.85, phase) : -Math.min(0.25, back) + Math.sin(t * 1.2) * 0.04;
   const ropeEnd = (th) => ({ x: W.pivot.x + Math.sin(th) * W.L, y: W.pivot.y + Math.cos(th) * W.L });
   const s = (u * 3.8) / 170;
   let gx;
