@@ -2,7 +2,7 @@
   "slug": "just-right",
   "name": "Just Right",
   "description": "Hold, release, just right. Before the three bears come home.",
-  "dir": "game",
+  "dir": "dist",
   "productionBranch": "main",
   "genre": "Party",
   "icon": "store/icon.png",

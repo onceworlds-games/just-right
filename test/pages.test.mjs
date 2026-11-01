@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { PAGES, readPage, shownValue, finalValue, evaluate, bandAt, autoReleaseAt, popLine, perfectRadius, verdictWord, inBand, MOVING, FOGGY, WOBBLY, SWING_TOPS } from '../game/pages.js';
-import { makePage } from '../game/plan.js';
-import { createRng } from '../game/rng.js';
-import { solveHold } from '../game/brain.js';
-import { createStage } from '../game/stage.js';
+import { PAGES, readPage, shownValue, finalValue, evaluate, bandAt, autoReleaseAt, popLine, perfectRadius, verdictWord, inBand, MOVING, FOGGY, WOBBLY, SWING_TOPS } from '../src/core/pages.js';
+import { makePage } from '../src/core/plan.js';
+import { createRng } from '../src/core/rng.js';
+import { solveHold } from '../src/core/brain.js';
+import { createStage } from '../src/core/stage.js';
 
 const page = (g, extra = {}) => readPage({ g, c: 600, w: 75, sp: 100, tw: 0, ph: 0, ...extra });
 

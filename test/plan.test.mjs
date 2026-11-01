@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readPage, evaluate, inBand, pageOf } from '../game/pages.js';
-import { matchPlan, dailyPlan, createRun, practicePage, soloLevel, levelOf, multiplierFor, matchTier, EASY } from '../game/plan.js';
-import { FOLK, planHold, botPlan, sigmaFor, AUTOPLAY } from '../game/brain.js';
+import { readPage, evaluate, inBand, pageOf } from '../src/core/pages.js';
+import { matchPlan, dailyPlan, createRun, practicePage, soloLevel, levelOf, multiplierFor, matchTier, EASY } from '../src/core/plan.js';
+import { FOLK, planHold, botPlan, sigmaFor, AUTOPLAY } from '../src/core/brain.js';
 
 const score = (P, plan) => evaluate(P, plan.h, plan.h === null ? P.win : plan.press + plan.h);
 

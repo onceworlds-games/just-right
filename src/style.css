@@ -1,0 +1,8 @@
+@font-face { font-family: 'Fraunces'; font-weight: 900; font-display: swap; src: url('/fonts/fraunces-latin-900-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-weight: 700; font-display: swap; src: url('/fonts/fraunces-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-weight: 800; font-display: swap; src: url('/fonts/barlow-condensed-latin-800-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-weight: 700; font-display: swap; src: url('/fonts/barlow-condensed-latin-700-normal.woff2') format('woff2'); }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #1D2440; overscroll-behavior: none; }
+body { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+#cv { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#ui { position: fixed; inset: 0; pointer-events: none; }

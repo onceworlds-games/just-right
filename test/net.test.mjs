@@ -1,9 +1,9 @@
 import test, { mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { Hub, haveSdk, loadHelpers } from './hub.mjs';
-import { createOnline, INTRO_MS, validData, validMark, BOT_FILL } from '../game/net.js';
-import { readPage, evaluate } from '../game/pages.js';
-import { planHold } from '../game/brain.js';
+import { createOnline, INTRO_MS, validData, validMark, BOT_FILL } from '../src/core/net.js';
+import { readPage, evaluate } from '../src/core/pages.js';
+import { planHold } from '../src/core/brain.js';
 
 const skip = !haveSdk && 'the SDK helpers (OW_SDK_DIST) are not available';
 const flush = () => new Promise((r) => setImmediate(r));
