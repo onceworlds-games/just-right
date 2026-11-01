@@ -308,10 +308,11 @@ All synthesized (Web Audio), through one mixer.
 - **Icon:** Goldilocks peeking over a red bowl of porridge on storybook blue, full bleed. No text.
 - **Badges:** a symbol on a coloured disc each (a check, stars, a flame, a broken chair, a bowl with 10, Papa Bear's head, a
   calendar, an open book, a crown).
-- **Trailer** (`store/trailer.mp4`): real play captured with `?autoplay=1&pages=8` (the bot brain plays for the local player),
-  cut hard between pages, ending on the title's stamp.
+- **Trailer** (`store/trailer.mp4`, 23 s): real play captured with `?autoplay=1&pages=8` (the bot brain plays for the local
+  player; `&clumsy=1` lets go late, for the misses), cut hard: the porridge held into the green and stamped JUST RIGHT! with
+  its reveal, then TOO HOT, TOO FLUFFY and TOO HARD, the rope swing and its reveal, the podium, and the title's stamp.
 - `?poster=<name>` draws one staged frame for the store art; `<name>.390x844` draws it at a phone's size, to check layouts
-  (`lobby`, `runover`, `daily`, `shelf` exist for that).
+  (`lobby`, `runover`, `daily`, `shelf` exist for that, and `page-<id>` / `page-<id>-<gauge %>` for one page as in a match).
 
 ## Originality check
 
