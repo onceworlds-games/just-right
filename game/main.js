@@ -56,6 +56,8 @@ async function boot() {
   const ow = window.onceworlds || null;
   // ?autoplay=1: the bot brain plays for this player (the platform's pictures and the trailer); ?autoplay-to=lobby stops there.
   const autoplay = params.get('autoplay') === '1';
+  // ?clumsy=1: a careless hand instead (late, and the odd blunder), for footage of the pages going wrong.
+  const AUTO = params.get('clumsy') === '1' ? { skill: 0.3, bias: 90, press: [0.3, 0.6], blunder: 4 } : AUTOPLAY;
   const autoTo = params.get('autoplay-to');
   // Join first, before anything is built, so a reload keeps its seat.
   const joinRoom = () => (ow && ow.rooms && ow.rooms.join ? Promise.resolve(ow.rooms.join(JOIN_OPTIONS)).catch(() => null) : Promise.resolve(null));
@@ -568,11 +570,8 @@ async function boot() {
     holdSound.stop();
   }
 
-  function resume() {
-    if (!paused) return;
-    const d = performance.now() - pausedAt;
-    paused = false;
-    // Everything on this page waits for the pause.
+  /** Everything on this page waits out a pause of d ms. */
+  function shiftPage(d) {
     if (pc) {
       stage.start += d;
       if (stage.pressAt !== null) stage.pressAt += d;
@@ -583,6 +582,14 @@ async function boot() {
     }
     for (const t of timers) t.at += d;
   }
+
+  function resume() {
+    if (!paused) return;
+    paused = false;
+    shiftPage(performance.now() - pausedAt);
+  }
+  /** When the room paused the story (nobody connected long enough): the page stands still with it. */
+  let matchPausedAt = 0;
 
   // ---------------------------------------------------------------- input
   let keyDown = false;
@@ -890,7 +897,7 @@ async function boot() {
     // The brain holds for this page (the title, and ?autoplay).
     if (!pc || !stage.playing) return;
     if (!pc.auto) {
-      let plan = planHold(pc.P, `auto:${pc.key}`, AUTOPLAY);
+      let plan = planHold(pc.P, `auto:${pc.key}`, pc.kind === 'attract' ? AUTOPLAY : AUTO);
       if (pc.kind === 'attract' && pc.P.g === 'chair' && plan.h !== null) plan = { ...plan, h: plan.h + 700 };
       if (plan.h === null) plan = { press: plan.press, h: 600 };
       pc.auto = plan;
@@ -926,6 +933,18 @@ async function boot() {
       return;
     }
     countdownN = 0;
+    if (m.paused) {
+      if (!matchPausedAt) {
+        matchPausedAt = now;
+        if (stage.holding) release(now, 'player');
+        holdSound.stop();
+      }
+      return;
+    }
+    if (matchPausedAt) {
+      shiftPage(now - matchPausedAt);
+      matchPausedAt = 0;
+    }
     if (phase === 'round' || phase === 'intro') {
       const P = readPage(m.data);
       if (!P) return;
@@ -976,7 +995,7 @@ async function boot() {
         reveal.crowned = true;
         sfx.fanfare();
       }
-      if (autoplay && age > 1.6 && pressedSeen !== m.roundId) tap();
+      if (autoplay && age > 2.6 && pressedSeen !== m.roundId) tap();
       return;
     }
     if (phase === 'results') {
