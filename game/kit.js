@@ -160,10 +160,12 @@ function stampCanvas(text, size, color, dpr) {
   const padY = size * 0.3;
   const w = Math.ceil(tw + padX * 2);
   const h = Math.ceil(size * 1.05 + padY * 2);
-  c = document.createElement('canvas');
-  c.width = Math.ceil(w * dpr) + 4;
-  c.height = Math.ceil(h * dpr) + 4;
-  const g = c.getContext('2d');
+  // The ink goes on its own layer (its bare specks mustn't cut the paper), then onto a cream label, so a red stamp reads on a
+  // red pot as well as on the wall.
+  const ink = document.createElement('canvas');
+  ink.width = Math.ceil(w * dpr) + 4;
+  ink.height = Math.ceil(h * dpr) + 4;
+  const g = ink.getContext('2d');
   g.scale(dpr, dpr);
   g.translate(1, 1);
   const lw = Math.max(2.5, size * 0.09);
@@ -191,6 +193,18 @@ function stampCanvas(text, size, color, dpr) {
     g.fill();
   }
   g.globalAlpha = 1;
+  c = document.createElement('canvas');
+  c.width = ink.width;
+  c.height = ink.height;
+  const p = c.getContext('2d');
+  p.save();
+  p.scale(dpr, dpr);
+  p.translate(1, 1);
+  rr(p, lw, lw, w - lw * 2, h - lw * 2, size * 0.2);
+  p.fillStyle = 'rgba(250,240,218,0.9)';
+  p.fill();
+  p.restore();
+  p.drawImage(ink, 0, 0);
   c.cssW = w + 2;
   c.cssH = h + 2;
   stampCache.set(key, c);

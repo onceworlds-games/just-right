@@ -317,7 +317,7 @@ async function boot() {
       else if (r.k === 'asleep') sfx.poof();
       else if (r.d > P.w + 0.08) sfx.trombone();
       else sfx.thud();
-      if (r.k !== 'asleep' && pc && pc.kind !== 'attract') fx.float(`+${pts}`, spot.x, spot.y + spot.size * 1.3, { color: r.k === 'perfect' ? C.red : C.ink, size: L.small ? 26 : 34 });
+      if (r.k !== 'asleep' && pc && pc.kind !== 'attract') fx.float(`+${pts}`, spot.x, spot.y + spot.size * 2.1, { color: r.k === 'perfect' ? C.red : C.ink, size: L.small ? 26 : 34 });
     });
     // The page's own sound and particles.
     const k = r.k;
