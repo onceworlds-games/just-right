@@ -10,7 +10,8 @@ function layer(key, W, H, dpr, paint) {
   const id = `${key}|${W}|${H}|${dpr}`;
   let c = cache.get(id);
   if (c) return c;
-  for (const k of cache.keys()) if (k.startsWith(`${key}|`)) cache.delete(k);
+  // A few sizes at a time (a rotation, the lobby's floor and the play floor); the oldest goes first.
+  while (cache.size >= 6) cache.delete(cache.keys().next().value);
   c = document.createElement('canvas');
   c.width = Math.max(1, Math.ceil(W * dpr));
   c.height = Math.max(1, Math.ceil(H * dpr));
@@ -22,15 +23,14 @@ function layer(key, W, H, dpr, paint) {
 }
 
 /** Where things stand in the kitchen for this screen. */
-export function kitchenLayout(W, H) {
+export function kitchenLayout(W, H, floor) {
   const portrait = H > W * 1.1;
-  const floorY = Math.round(H * (portrait ? 0.86 : 0.82));
+  const floorY = Math.round(floor ?? H * (portrait ? 0.86 : 0.82));
   const win = portrait ? { x: W * 0.2, y: H * 0.28, r: Math.min(W, H) * 0.13 } : { x: W * 0.13, y: H * 0.36, r: Math.min(W, H) * 0.14 };
   return { portrait, floorY, win, wainTop: floorY - Math.round(H * 0.13) };
 }
 
-function paintKitchen(g, W, H) {
-  const K = kitchenLayout(W, H);
+function paintKitchen(g, W, H, K) {
   g.fillStyle = T.wall;
   g.fillRect(0, 0, W, H);
   // Wallpaper: small diamonds in rows.
@@ -145,8 +145,7 @@ function drawWindowView(ctx, K, t, cam) {
 }
 
 /** Bears passing the window (the title's and the cover's moment): a phase 0..1 across, or null. */
-export function drawWindowBears(ctx, W, H, phase, kinds = ['papa', 'mama', 'baby'], drawBear) {
-  const K = kitchenLayout(W, H);
+export function drawWindowBears(ctx, K, phase, drawBear, kinds = ['papa', 'mama', 'baby']) {
   const { x, y, r } = K.win;
   ctx.save();
   circle(ctx, x, y, r);
@@ -158,9 +157,9 @@ export function drawWindowBears(ctx, W, H, phase, kinds = ['papa', 'mama', 'baby
   ctx.restore();
 }
 
-export function drawKitchen(ctx, W, H, dpr, t, cam = { x: 0, y: 0 }) {
-  const K = kitchenLayout(W, H);
-  const img = layer('kitchen', W, H, dpr, paintKitchen);
+export function drawKitchen(ctx, W, H, dpr, t, cam = { x: 0, y: 0 }, floor) {
+  const K = kitchenLayout(W, H, floor);
+  const img = layer(`kitchen:${K.floorY}`, W, H, dpr, (g) => paintKitchen(g, W, H, K));
   ctx.drawImage(img, -cam.x * 0.3, -cam.y * 0.3, W, H);
   drawWindowView(ctx, { ...K, win: { ...K.win, x: K.win.x - cam.x * 0.3, y: K.win.y - cam.y * 0.3 } }, t, cam);
   // Warm light from the window across the room.
@@ -179,13 +178,12 @@ export function drawKitchen(ctx, W, H, dpr, t, cam = { x: 0, y: 0 }) {
 }
 
 /** The clearing: sky, sun, hills, the cottage far off, trees; groundY where the grass begins. */
-export function outdoorLayout(W, H) {
+export function outdoorLayout(W, H, ground) {
   const portrait = H > W * 1.1;
-  return { portrait, groundY: Math.round(H * (portrait ? 0.8 : 0.78)) };
+  return { portrait, groundY: Math.round(ground ?? H * (portrait ? 0.8 : 0.78)) };
 }
 
-function paintOutdoors(g, W, H) {
-  const O = outdoorLayout(W, H);
+function paintOutdoors(g, W, H, O) {
   g.fillStyle = T.sky;
   g.fillRect(0, 0, W, H);
   circle(g, W * 0.82, H * 0.2, Math.min(W, H) * 0.08, T.mustardLight);
@@ -227,11 +225,11 @@ function paintOutdoors(g, W, H) {
   g.fillRect(0, O.groundY, W, 5);
 }
 
-export function drawOutdoors(ctx, W, H, dpr, t, cam = { x: 0, y: 0 }) {
-  const img = layer('outdoors', W, H, dpr, paintOutdoors);
+export function drawOutdoors(ctx, W, H, dpr, t, cam = { x: 0, y: 0 }, ground) {
+  const O = outdoorLayout(W, H, ground);
+  const img = layer(`outdoors:${O.groundY}`, W, H, dpr, (g) => paintOutdoors(g, W, H, O));
   ctx.drawImage(img, -cam.x * 0.3, -cam.y * 0.3, W, H);
   // A cloud drifting.
-  const O = outdoorLayout(W, H);
   ctx.save();
   ctx.fillStyle = T.paper;
   const cx = ((t * 12) % (W + 300)) - 150;

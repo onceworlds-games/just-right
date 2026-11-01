@@ -27,7 +27,7 @@ export const PAGES = [
   { id: 'cake', name: 'Cake', cue: 'Hold to slice', axis: 'right', set: 'mid', band: [0.4, 0.6], under: 'TOO SHORT', over: 'TOO FAR', full: 2.2, twists: [MOVING, WOBBLY] },
   { id: 'spoon', name: 'Cool the Spoon', cue: 'Hold to blow', axis: 'up', set: 'mid', band: [0.28, 0.5], under: 'TOO COLD', over: 'TOO HOT', full: 3.0, twists: [MOVING, FOGGY, WOBBLY], falls: true },
   { id: 'milk', name: 'Milk', cue: 'Hold to pour', axis: 'up', set: 'late', band: [0.45, 0.75], under: 'TOO LITTLE', over: 'SPILLED!', full: 3.25, twists: [MOVING, FOGGY, WOBBLY], lag: true, hint: 'It keeps pouring!' },
-  { id: 'bowl', name: 'Bowl Slide', cue: 'Hold to push', axis: 'right', set: 'late', band: [0.45, 0.8], under: 'TOO SHORT', over: 'OFF THE EDGE!', full: 3.1, twists: [MOVING], lag: true, hint: 'It keeps sliding!' },
+  { id: 'bowl', name: 'Bowl Slide', cue: 'Hold to push', axis: 'right', set: 'late', band: [0.45, 0.8], under: 'TOO SHORT', over: 'TOO FAR', full: 3.1, twists: [MOVING], lag: true, hint: 'It keeps sliding!' },
   { id: 'jar', name: 'Honey Jar', cue: 'Hold to swing', axis: 'right', set: 'late', band: [0.24, 0.76], under: 'TOO LEFT', over: 'TOO RIGHT', full: 0, twists: [MOVING] },
   { id: 'bell', name: 'Bell', cue: 'Hold to swing', axis: 'up', set: 'late', band: [0.7, 0.86], under: 'TOO WEAK', over: 'TOO HARD', full: 0, twists: [MOVING] },
   { id: 'swing', name: 'Rope Swing', cue: 'Hold to swing', axis: 'right', set: 'late', band: [0.36, 0.9], under: 'SPLASH!', over: 'TOO FAR', full: 0, twists: [], tops: true },
@@ -228,8 +228,9 @@ export function evaluate(P, h, t) {
 /** In the band (what keeps the bears away in Before the Bears). */
 export const inBand = (k) => k === 'perfect' || k === 'good';
 
-/** The word a verdict is stamped with. */
-export function verdictWord(P, k) {
+/** The word a verdict is stamped with (v: where it ended up, for the bowl that slid off the table). */
+export function verdictWord(P, k, v = 0) {
+  if (k === 'over' && P.g === 'bowl' && v >= 0.985) return 'OFF THE EDGE!';
   switch (k) {
     case 'perfect':
       return 'JUST RIGHT!';
