@@ -814,7 +814,7 @@ export function drawPodium(ctx, W, H, dpr, top, P) {
 
 export function drawRunOver(ctx, W, H, dpr, top, R) {
   const floorY = Math.round(H * 0.8);
-  drawKitchen(ctx, W, H, dpr, R.age, { x: 0, y: 0 }, floorY);
+  drawKitchen(ctx, W, H, dpr, R.age, { x: 0, y: 0 }, floorY, H > W * 1.1);
   const doorX = W * (H > W * 1.1 ? 0.75 : 0.78);
   const dh = Math.min(260, (floorY - top) * 0.8);
   door(ctx, doorX, floorY, dh, 1);
@@ -835,7 +835,7 @@ export function drawRunOver(ctx, W, H, dpr, top, R) {
 }
 
 export function drawDailyOver(ctx, W, H, dpr, top, D) {
-  drawKitchen(ctx, W, H, dpr, D.age, { x: 0, y: 0 }, Math.round(H * 0.84));
+  drawKitchen(ctx, W, H, dpr, D.age, { x: 0, y: 0 }, Math.round(H * 0.84), H > W * 1.1);
   const small = Math.min(W, H) < 500;
   const cw = Math.min(W - 40, small ? 300 : 380);
   const ch = Math.min(H - top - (small ? 110 : 150), small ? 230 : 320);

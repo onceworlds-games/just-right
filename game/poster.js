@@ -7,7 +7,7 @@ import { stageLayout, hudLayout, clearAreas } from './layout.js';
 import { drawPage } from './view.js';
 import { SCENES } from './scenes.js';
 import { drawGauge, gaugePos } from './gauge.js';
-import { drawPath, drawHeads, drawScoreSign, drawReveal, drawPodium, drawLobby, spread } from './screens.js';
+import { drawPath, drawHeads, drawScoreSign, drawReveal, drawPodium, drawLobby, drawRunOver, drawDailyOver, drawShelf, spread } from './screens.js';
 import { kitchenLayout, drawBearsAtWindow } from './rooms.js';
 import { readPage } from './pages.js';
 import { FOLK } from './brain.js';
@@ -113,6 +113,38 @@ function lobby(ctx, W, H) {
   const seats = FOLK.slice(0, 6).map((f, i) => ({ who: folk(i), name: f.name, ready: i % 2 === 0, host: i === 0, me: i === 1, color: C.blue }));
   seats.push({ empty: true, invite: true }, { empty: true, invite: true });
   drawLobby(ctx, W, H, 1, { ...clearAreas(W, H, null), bottom: 88 }, { seats, pages: 12, best: 1840, daily: { day: 1, month: 'Nov', best: 412 }, soloOk: true, t: 0, winner: folk(2) });
+}
+
+/** The solo screens, with where their buttons go outlined (to check a layout; not store art). */
+function solo(ctx, W, H, which) {
+  const small = Math.min(W, H) < 500;
+  const top = Math.max(70 + 10, 24);
+  const btn = (cx, cy) => {
+    ctx.strokeStyle = C.red;
+    ctx.lineWidth = 3;
+    rr(ctx, cx - (small ? 66 : 80), cy - (small ? 26 : 32), small ? 132 : 160, small ? 52 : 64, 6);
+    ctx.stroke();
+  };
+  if (which === 'runover') {
+    const at = drawRunOver(ctx, W, H, 1, top, { score: 1840, pages: 9, best: 2210, age: 1.5 });
+    btn(at.cx, at.y + (small ? 18 : 24));
+    btn(at.cx, at.y + (small ? 84 : 104));
+  } else if (which === 'daily') {
+    const at = drawDailyOver(ctx, W, H, 1, top, { score: 742, best: 812, streak: 3, day: 1, month: 'Nov', age: 1.5 });
+    const side = small && H < W ? 120 : 0;
+    btn(W / 2 - (side ? 90 : 0), Math.min(H - 40, at.y));
+    btn(W / 2 + (side ? 90 : 0), Math.min(H - 40, at.y) + (side ? 0 : small ? 64 : 76));
+  } else {
+    const met = {};
+    const stars = {};
+    readPage({ g: 'porridge', c: 600, w: 70, sp: 100, tw: 0, ph: 0, n: 1 });
+    ['porridge', 'chair', 'pillow', 'toast', 'balloon', 'spoon', 'milk', 'cake'].forEach((id, i) => {
+      met[id] = 1;
+      stars[id] = i % 4;
+    });
+    drawShelf(ctx, W, H, 1, Math.max(70 + 8, 70), { met, stars, t: 0 });
+    btn(W / 2, H - (small ? 40 : 50));
+  }
 }
 
 function icon(ctx, W, H) {
@@ -342,6 +374,7 @@ export async function runPoster(full) {
   else if (name === 'multi') multi(ctx, W, H);
   else if (name === 'icon') icon(ctx, W, H);
   else if (name === 'lobby') lobby(ctx, W, H);
+  else if (name === 'runover' || name === 'daily' || name === 'shelf') solo(ctx, W, H, name);
   else if (name.startsWith('badge-')) badge(ctx, W, name.slice(6));
   else cover(ctx, W, H, fx);
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
