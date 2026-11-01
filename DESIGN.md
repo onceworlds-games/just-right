@@ -4,26 +4,30 @@
 
 **Not too hot, not too cold: hold, let go, and get everything just right before the three bears come home.**
 
-**The goal in one look:** a pot of porridge, a big thermometer beside it with a green band stamped *just right*, and a
-pulsing "Hold". Fill it, stop it in the green.
+**The goal in one look:** Goldi at the bears' stove, a brass thermometer beside the pot with a green band, and "Hold to heat".
+Fill it, stop it in the green.
 
 One verb for the whole game: **hold** (Space, the mouse button, or a finger anywhere on the screen) and **let go**. Every page
-of the story is a 4-8 second microgame with one thing to fill, raise, heat, pour or swing and one green band. How close you stop
-to the middle of the band is your score. Then everyone's marks land on the same gauge at once: the reveal is the laugh.
+of the story is a 4-8 second moment in the bears' cottage with one thing to heat, lower, fluff, pour, push or swing and one green
+band. How close you stop to the middle of the band is your score. In a story with others, everyone's marks then land on one giant
+gauge in the parlour: the reveal is the laugh.
+
+The game is a 3D dollhouse: the bears' cottage cut open at the front (kitchen, dining room, parlour, bedroom), a garden with a
+pond, a well and a bell tower, and the woods around it. The camera glides from room to room like a picture book turning its
+pages.
 
 ## The first 60 seconds
 
-| Time | Screen | What happens | Words on screen |
-|---|---|---|---|
-| 0 s | Title | The bears' kitchen, alive: Goldilocks heats the porridge on her own (the bot brain plays), the thermometer climbs into the green, a red **JUST RIGHT!** stamp thumps down. Next she sits on the little chair: CRACK. Then the balloon, the toast, the milk, the rope swing. The name is stamped big across the top third. | "Just Right" (the stamp), **Play** (a red stamp-shaped button), "Best 1,840" under it once there is one |
-| ~3 s | Lobby | Play (tap, click, Space, Enter) starts the sound and the lobby slides in: the bears' long table. You sit at it (your avatar head on a small storybook body); the empty chairs hold the woodland rivals who would play (a fox, a hare, an owl...). Three bowls on the shelf are the match length; on the wall a cuckoo clock (Before the Bears), a calendar (Daily) and a bookshelf (Practice). The platform's Ready strip sits along the bottom. | First visit only: "Ready to play" with an arrow to the strip. Object labels: "Before the Bears", "Daily", "Practice", "Pages" |
-| ~6 s | Countdown | You press Ready (alone in a server, a match starts with bots). The game's own 3-2-1 over the table: Papa Bear's head pops up with **3**, Mama's with **2**, Baby's with **1**, each with a growl. | 3, 2, 1 |
-| ~9 s | Page 1 intro (1.5 s) | Always **Porridge**, gentle (speed 0.85, the widest band). The page's name slams in at the top with the page number under it, like a chapter heading; the band, the pot and "Hold" are all on screen from the first frame. | "Porridge", "Page 1 of 12", "Hold to heat" |
-| ~10.5 s | Play | A hand and a Space key pulse under the pot. You hold: the flame grows, the porridge bubbles faster, the mercury climbs, a rising tone follows it and turns sweet inside the band. First page ever: when the mercury enters the band, "Let go!" pops beside it. | "Hold" (until pressed), "Let go!" (first time only) |
-| ~13 s | Your result | At release the scene answers within a frame: in the band the spoon dips and **JUST RIGHT!** is stamped (+100), or the pot boils over (**TOO HOT!**, red, steam blast) or grows a cold skin (**TOO COLD!**, blue, frost). The other players' heads along the top tick off as they let go. | The verdict stamp and "+87" |
-| ~14.5 s | Reveal (3.4 s) | A cream page slides over the scene with the gauge zoomed on the band. Everyone's markers (avatar heads) drop beside it, farthest first, closest last, each on a leader line to its true place; the closest gets the crown (and the stamp where there's room); points tick into the standings beside it (below it on a phone). A tap skips it once everyone has tapped. | Names, "+100", "+64" |
-| ~18.5 s | Page 2 | The bears take a step along the path. **Little Chair**: hold to lower Goldilocks onto Baby Bear's chair; let go too late and it cracks (shake, splinters, a laugh). | "Little Chair", "Hold to sit" |
-| ~28-60 s | Pages 3-5 | From the easy set (Pillow, Toast, Balloon): a balloon can POP (gasp), toast can burn. Each new page shows its cue ("Hold to pump") the first two times a player meets it, then just "Hold". | "Hold to pump", "Hold to toast"... |
+| Time | Screen | What happens |
+|---|---|---|
+| 0 s | Title | The cottage from the front path at golden hour; Goldi waves at the door; the name is a red rubber stamp. **Play** below it, the rank, honey and today's tasks beside it. |
+| ~3 s | The bears' table (lobby) | The camera glides through the front into the dining room: everyone here sits at the bears' long table in their own look and hat. Before the Bears, the Daily, the Storybook and the Wardrobe are one tap away; the platform's Ready strip is below. |
+| ~6 s | Countdown | Ready (alone, a story starts with the woodland folk): the 3-2-1 is stamped over the table. |
+| ~9 s | Page 1 | Always **Porridge**, gentle. The camera swings into the kitchen; "Page 1 of 12" and "Porridge" slam in; "Hold to heat" with the Space key or a fingertip. |
+| ~10 s | Play | Hold: the flame grows, the pot rattles and bubbles faster, the mercury climbs, a tone rises and chimes inside the band, the camera leans in. |
+| ~13 s | Verdict | Let go: in the green Goldi nods and **JUST RIGHT!** is stamped with a hit-stop and sparkles; too long and the pot boils over (TOO HOT!, foam and steam), too short and she shivers (TOO COLD!). |
+| ~14 s | Reveal | The camera glides to the parlour, where a giant thermometer hangs over the fire: every player's face drops onto it from the worst to the best, the closest gets the crown, the standings deal in below. |
+| ~18 s | Page 2 | The next room: Baby Bear's chair (lower her onto it; too far and it snaps and she goes over backwards), the pillow, the toast... |
 
 ## Controls
 
@@ -99,38 +103,19 @@ fast pages, late on the "keeps going" pages, and fooled by the chair's cushion a
 cushion, picks the slowest crossing of the honey jar (near the ends, not the middle), lets go on the rise of the bell, waits for
 the right top on the swing, plays fog by ear, and times the wobble's trough. Scores 85-100, and chases perfect streaks.
 
-## Solo
-
-Alone in the lobby, everything is one tap away (all of it ends when a match starts, banking what was scored):
-
-- **A match with bots.** Ready on the platform strip: the same story as multiplayer against five woodland rivals (8, 12 or 16
-  pages, 1.5-3 min).
-- **Before the Bears** (the cuckoo clock): endless pages, faster and faster, **three bears = three lives**. The rule is one line:
-  **stop in the green, or a bear comes home.** A miss (outside the band, or asleep) sends a bear through the door ("Somebody's
-  been eating my porridge!"); the third catches you: run over. Score per page = accuracy × streak multiplier (×1, +1 for each
-  perfect in a row, up to ×5; any non-perfect resets it). Level = pages cleared / 5: speed 1 + 0.12·level (cap 2.0),
-  w = max(0.035, 0.075 − 0.005·level); twists from level 2 (25% chance, +10% a level, cap 70%). Pages come from a shuffle bag
-  (no repeats until all twelve were played). A run lasts 1-2 min for a beginner, 5+ for an expert. Personal best on the clock's face;
-  leaderboard `before-the-bears`.
-- **Daily Porridge** (the calendar): ten pages fixed for everyone today (pages, band centres and twists from the UTC date's
-  seed), rising from level 0 to 4, no lives, score out of 1,000. Unlimited tries; the calendar shows today's best and your
-  streak of days. (Platform leaderboards never reset, so the daily has no board: today's best and the streak are the reward.)
-- **Practice** (the bookshelf): a book for every page you've met (blank spines for the rest), each with 0-3 stars (★ 70+,
-  ★★ 90+, ★★★ a perfect). Tap one: play it again and again at speed 1 with a new band each go. Esc or Back returns.
-
 ## Multiplayer
 
 - **Public game**, `rooms.join({ maxPlayers: 8, minPlayers: 1, lobby: 'bar', ownCountdown: true, settings: [{ id: 'pages',
   label: 'Pages', options: [8, 12, 16], default: 12 }] })`. Friends get private servers from the platform. Joined once, on load.
-- **Lobby** (drawn by the game, the platform's Ready/Start strip below): who's here at the table, the three bowls for the
-  length (Baby's = 8, Mama's = 12, Papa's = 16: the host taps one, `room.setSetting`, and the room clears ready flags), a READY
-  stamp on each ready player's place card, empty chairs that offer `ow.ui.showInvite()` in a private server. Public servers start
+- **Lobby** (the bears' table in 3D, the platform's Ready/Start strip below): everyone who's here sits at the long table in
+  their own look and hat, a name tag over each; Pages (8, 12, 16) for the host (`room.setSetting`, the room clears ready
+  flags); empty places offer `ow.ui.showInvite()` in a private server. Public servers start
   on the room's countdown once everyone is ready; private ones wait for the host's Start (`room.canStart`). Joining never starts
   anything. The title and solo screens call `room.hideLobby()`.
 - **Bots** (`createBots`, `fill: 6`, thinking on the host only) fill seats up to six; up to eight real players. Bots are the
-  woodland folk, each a name, a face and a habit: **Ottoline** the owl (sharp, steady), **Fen** the fox (good, a little early),
-  **Corvin** the crow (steady), **Hazel** the hare (presses at once, erratic), **Sorrel** the squirrel (jittery), **Prickle** the
-  hedgehog (eager: lets go early), **Burdock** the badger (slow: late), **Moss** the mole (clumsy: the odd blunder).
+  woodland folk, each a name, a face and a habit: **Ottoline** (sharp, steady), **Fen** (good, a little early), **Corvin** (steady),
+  **Hazel** (presses at once, erratic), **Sorrel** (jittery), **Prickle** (eager: lets go early), **Burdock** (slow: late),
+  **Moss** (clumsy: the odd blunder). Each is one of the cast in their own colours, with a portrait for the HUD.
 - **Match:** `createMatch` with `introSeconds: 0` (the page's 1.5 s intro is the start of its round, so the page is dealt and
   drawn from the first frame), `roundSeconds: 12` (a safety net), `roundEndSeconds: 3.4` (the reveal), `resultsSeconds: 12`
   (the podium), `admit: 'next'`. Page 1 is always gentle Porridge; pages in the first third
@@ -161,15 +146,49 @@ Alone in the lobby, everything is one tap away (all of it ends when a match star
   - Whoever reads anything from the room checks its shape and range first (page id in the list, numbers in their bounds, at most
     8 + 6 seats); names are drawn as canvas text only.
 
+## Before the Bears (the run)
+
+The main solo mode, and the one that keeps people coming back. Endless pages, faster and narrower as you go, **three bears =
+three lives**: stop outside the green (or fall asleep) and a bear bangs through the front door and stays in the room, watching
+from the edge of the picture; the third ends the run.
+
+- **Points:** the page's score × the streak multiplier (×1, +1 for each perfect in a row, up to ×5; any non-perfect resets it).
+  A perfect streak turns the whole picture golden and the band in the music joins in.
+- **The Bears' Cupboard:** every fifth page, pick one of three **charms** (seeded per run): Big Spoon (wider green), Slow Clock
+  (slower pages), Golden Notch (bigger perfect), Spare Pillow (forgive a miss, stacks), Honey Pot (honey ×2), and as your rank
+  rises Steady Paws (no twists), Crystal Ball (see where it will land), Hot Streak (streak to ×8), Honey Trail (a bear goes back
+  out), and the risky ones: Tiny Spoon (thin green, points ×1.5), Quick Paws (faster, ×1.4), Lucky Star (perfects +50). Every
+  run is a different build.
+- **The Three Bowls (boss):** every tenth page Papa and Mama Bear sit at the table with Goldi and three bowls: three holds in a
+  row, one page number, each bowl its own band. Clean them all for 60 honey and the Three Bowls badge; a missed bowl costs a
+  bear, but the run goes on.
+- Pages come from a shuffle bag; level = pages cleared / 5 sets speed and band width; twists from level 2.
+- **Run over:** the bears in the doorway, the score, pages and best streak, honey earned, the rank bar filling, the
+  `before-the-bears` board, **Again** and **Lobby**.
+
+## Daily Porridge, the Storybook
+
+- **Daily Porridge:** ten pages fixed for everyone today (pages, bands and twists from the UTC date's seed), rising from level 0
+  to 4, no lives, score out of 1,000. Unlimited tries; today's best and a day streak. Every score goes on the shared `daily`
+  list, so the end screen shows **today's board** of everyone who played it.
+- **The Storybook** (practice): a page for every scene, each with its picture (rendered from the game), 0-3 stars (★ 70+,
+  ★★ 90+, ★★★ a perfect) and a lock until you've met it. Tap one: play it again and again at speed 1 with a new band each go.
+
 ## Progression and reasons to come back
 
-- **Saves** (`ow.save`, key `profile`): pages met (count per page), stars per page, total perfects, perfect porridges, best run,
-  best perfect streak, match wins, daily `{ day, best, streak, lastDay }`, first-time flags for hints.
-- **Personal bests** on the title (best run), on the cuckoo clock, on the calendar and on every results screen ("New best!" stamp).
-- **Leaderboards:** `before-the-bears` (best run score), `perfect-streak` (longest run of perfects, any mode but Practice),
-  `stories-won` (match wins so far).
-- **Unlocks:** Practice books appear as you meet pages; stars fill them. Nothing that changes play.
-- **Badges** (9; stamps on coloured discs):
+- **Honey** is earned everywhere (a drop per 40 points, two more per perfect, more from tasks and bosses) and spent in the
+  **Wardrobe**: seven characters (Goldi, Rosie, Bramble, Sky, Pepper, and two bears, Cub and Bao), seven hats (bow, party hat,
+  beret, acorn cap, chef hat, sun hat, and the crown for ten stories won) and six stamp inks (the colour of your own JUST RIGHT!
+  stamp; Gold Leaf shines). Some open with a rank. Goldi turns by the parlour fire to show each one off.
+- **Ranks** from points (xp): Lost in the Woods → Porridge Taster → Chair Tester → Pillow Fluffer → Honey Finder → Bear Friend
+  → Cottage Regular → Just Right. Ranks open new charms and Wardrobe items.
+- **Three tasks a day**, the same for everyone (perfects, a page done just right, a long run, a streak, the daily, a story, the
+  boss, or a mishap like "Pop the balloon"), paid in honey.
+- **Perfects in the woods today:** one shared counter (`ow.data`, resets daily) everyone adds their perfects to, on the title.
+- **Leaderboards:** `before-the-bears` (best run), `perfect-streak` (longest run of perfects), `stories-won`.
+- **Saves** (`ow.save`, key `profile`, cleaned on load): honey, xp, pages met and stars, perfects, bests, wins, the daily
+  streak, what you own and wear, today's tasks, charms seen.
+- **Badges** (12, medals with a brass rim):
 
 | id | Name | Earned by |
 |---|---|---|
@@ -181,186 +200,100 @@ Alone in the lobby, everything is one tap away (all of it ends when a match star
 | `before-the-bears` | Before the Bears | Score 2,500 in one run |
 | `daily-porridge` | Daily Porridge | Finish a daily |
 | `every-story` | Every Story | Play all twelve pages |
-| `happily-ever-after` | Happily Ever After | Win a story (first place, three or more seats) |
-
-## Balance and timing (the numbers)
-
-| | Value |
-|---|---|
-| Intro card | 1.5 s (match), 1.0 s (solo) |
-| Window to play a page | clamp(time to fill at this speed + 2.0 s, 4.5, 8) s; jar and bell 6 s; the swing max(6, 5 / speed + 1.7) s. A pocket watch appears only when 3 s are left and the player hasn't pressed |
-| Reveal | 3.4 s (markers 0.12 s apart from 0.3 s, then the crown, then points); skippable after 1.4 s once everyone has tapped |
-| Solo verdict | 1.3 s in the band, 1.9 s when a bear comes home |
-| Perfect radius | ±0.02 of the gauge (≤ half the band) |
-| Band half-width | 0.08 (page 1 of a match) → 0.075 → 0.06 → 0.05; solo 0.075 → 0.035 |
-| Speed | 0.85 (page 1) → 1.0 → 1.15 → 1.3; solo 1.0 → 2.0 |
-| Match | 8 / 12 / 16 pages, ≈ 8-10 s each; last page ×2 |
-| Bot timing | press delay per character (0.15-1.4 s); hold error N(bias, σ) with σ = 170 − 130·skill ms (×1.5 in fog; the "keeps going" pages add a late bias of up to 0.04 for the less skilled); blunder chance 0.05·(1 − skill)·habit (±300-700 ms, or a quarter of the time forgetting to press) |
-| Bot skills | Ottoline 0.82, Fen 0.72 (−20 ms), Corvin 0.65, Hazel 0.55 (presses at once), Sorrel 0.5, Prickle 0.45 (−50 ms), Burdock 0.4 (+60 ms, slow to press), Moss 0.3 (clumsy) |
-
-**How it's checked (`npm test`, 30 node tests through the pure modules and a fake room):**
-- Every page: v stays in [0, 1] with no NaN at every speed and twist; the filling pages only go one way; the keeps-going pages end
-  further than they showed; every band is reachable inside the window with time to spare at every tier; the pop line, the spoon's
-  fall, the chair's cushion, the pillow's pumps, the swing's tops and the moving band behave.
-- Scoring at the edges (perfect, the band edge, outside, asleep, a pop); `readPage` refuses garbage.
-- The stage (the hold clock): timed from event timestamps, capped by the window and the travel; holding to the end lets go by
-  itself; nobody pressing sleeps; the swinging pages let go when the window closes.
-- Plans: a match is deterministic, gentle porridge first, no late page early, no page twice in a row, the last page double; the
-  daily is the same today for everyone and different tomorrow; Before the Bears speeds up and narrows.
-- Bots: always a legal hold inside the window, better with skill; seeded matches among the folk have no runaway leader and pages
-  end in the designed time; a Before the Bears run ends, and 2,500 takes skill.
-- The room, through a fake hub running the platform's own match helpers: a whole story with the folk, a mark taken once and
-  checked, the host reloading and a player dropping mid-page, a latecomer who watches then plays, the reveal skipped once everyone
-  taps.
-
-## Every screen
-
-All screens are the cottage; the world fills the screen at every size. The top-left 150×70 (or `ow.ui.reserved`) stays clear.
-
-- **Title:** the kitchen in attract mode (the bot brain plays porridge, chair, balloon, toast, milk and the swing in a loop with
-  real stamps), "Just Right" slammed across the top third, Play (red stamp-button) in the lower middle, the best run under the
-  name. Nothing else.
-- **Lobby:** the long table seen from the front, chairs in a row (8 on a wide screen; two rows of 4 on a phone held upright).
-  Each seat: avatar head on a storybook body, the name on a place card, a READY stamp when ready, a small crown on the host. The
-  three bowls on a shelf with 8 / 12 / 16 under them; the host's choice steams and gets a green dot. On the wall: the cuckoo
-  clock "Before the Bears" (best on its face), the calendar "Daily" (today's date and best), the bookshelf "Practice" (2×2 on an
-  upright phone, where they take the window's place). After a match, the last winner's face is framed on the wall. Bottom 88 px
-  left for the Ready strip. In a private server with friends waiting, the host's solo objects are dimmed.
-- **Countdown:** the bear heads 3-2-1 over the lobby (Papa, Mama, Baby), the only countdown (`ownCountdown: true`).
-- **Page intro:** the page's scene, its name slammed in at the top, "PAGE 4 OF 12" under it, the twist's stamp, a first-time
-  hint ("It keeps pouring!") in red.
-- **Play HUD:** top strip: the woodland path with a stepping stone per page and the three bears walking along it (multiplayer) or
-  the three bears in the woods vs at the door (solo lives); the other players' heads in a row under it (wiggle = holding, ✓ stamp
-  = done); your total and place on a hanging wooden sign top right (solo: score and ×multiplier). Bottom: the cue with the Space
-  keycap or a fingertip. The object centre-left, its gauge big beside it; the sideways pages (cake, bowl, jar, swing) put the gauge
-  under the object. On an upright phone the scene keeps its proportions a little below the middle, the gauge on the right.
-- **Reveal:** a cream page over the scene: the gauge zoomed on the band, every marker (avatar head, name and points beside it,
-  spread in one dimension with leader lines so 8 never overlap), the closest crowned, the JUST RIGHT! stamp beside it where there
-  is room; standings on the right (wide) or below (upright, all eight rows), points ticking in.
-- **Results / podium:** first place sits in Baby Bear's little chair (crowned, "1st" on its rail: the one that is just right),
-  second in Mama's, third in Papa's, the rest along the bottom with places and points, the JUST RIGHT stamp, oats for confetti.
-  Wide: the door on the back wall opens and the bears walk in; upright: they glare through the window. Baby Bear: "Someone's
-  in my chair!". After 12 s the lobby returns with the winner framed.
-- **Solo run:** the play HUD with lives; when caught: the bears in the doorway, the score huge, best, **Again** (Enter/Space/tap,
-  64 px) and **Lobby**.
-- **Daily end:** the calendar page with today's score /1000, best today, streak; **Again**, **Lobby**.
-- **Practice shelf:** the bookshelf filling the screen, twelve spines with names and stars (a "?" until met); tap to play;
-  **Lobby** (Back from a practice page returns to the shelf).
-- **Pause** (solo only, on the platform's pause or a hidden page): the scene stops, a cream card with **Resume** and **Lobby**.
-- **Room closed:** one message and one button: "You were removed" / Play, "Lost the connection" / Rejoin, "Playing in another
-  tab" / Play here.
+| `happily-ever-after` | Happily Ever After | Win a story with three or more at the table |
+| `three-bowls` | Three Bowls | Beat the Three Bowls in Before the Bears |
+| `all-dressed-up` | All Dressed Up | Buy something in the Wardrobe |
+| `cottage-regular` | Cottage Regular | Reach the rank Cottage Regular |
 
 ## Art direction
 
-- **The world:** the three bears' cottage in the woods, as a mid-century picture book: flat geometric cut shapes in confident
-  colour, crisp edges, no outlines on the set and a 3 px ink outline on characters and the thing you control (so they pop), soft
-  offset shadows. Lollipop and triangle trees, timber beams, a round window to the woods, a checked red tablecloth, copper pans,
-  three of everything in three sizes. Flat colour, no paper grain; the stamp is the only texture.
-- **Palette:**
-  - Cream `#F3E3C3`: walls, pages, light text
-  - Ink blue `#1E2747`: outlines, night, dark text
-  - Cottage red `#D2452B`: the stamp, "too much"
-  - Mustard `#E8A92E`: porridge, honey, Goldilocks's hair, highlights
-  - Forest green `#2F7A4E`: the just-right band
-  - Cold blue `#4C8DC9`: "too little", frost
-  - Bear brown `#7B4A2B`: wood, the bears
-- **Type:** **Fraunces** (Black, a soft old-style serif like 1970s picture-book covers) for the name, page titles and big
-  numbers; **Barlow Condensed** ExtraBold for stamps and labels (capitals only inside stamps). Self-hosted woff2 (latin, the
-  weights used) with their OFL licences; canvas text waits for `document.fonts.load` with a 1.5 s timeout.
-- **The signature: the red rubber stamp.** A double-ruled, slightly rotated rectangle with condensed capitals and an inked edge,
-  slammed down with an 80 ms hit-stop and a thump: "JUST RIGHT!" on a perfect, the title, READY in the lobby, the winner's name,
-  "New best!", the badges and the store art.
-- **Light and camera:** 2D, layered planes with gentle parallax (woods through the window, back wall, furniture, the object);
-  warm light shafts from the window and the stove's flicker. While you hold, the view pushes in by 4% (tension); cracks, pops and
-  splashes shake it (trauma², smooth). Reduced motion: no push, shake or flash; stamps fade in.
-- **Characters:** Goldilocks (golden curls, a mustard pinafore) acts in the scenes. Players are their **avatar heads**: on spoons
-  in the reveal, on storybook bodies at the table and on the podium chairs; you get a mustard ring and a "You" arrow. The bears:
-  Papa (big, dark brown, heavy brows, grumpy), Mama (middle, an apron, sweet), Baby (small, red overalls, sleepy). The woodland
-  rivals: flat animal heads in the same style.
-- **The HUD speaks the book:** the woodland path is the clock of the match and the bears are the lives, the score hangs on a
-  wooden sign, the page number is a chapter heading, verdicts are stamps, the window's last seconds are a pocket watch.
-  Words over the busy scene are cream on an ink band or ink with a cream outline.
-- **Phones:** 390×844 and 844×390 both work; text ≥ 18 px; buttons ≥ 56 px; nothing under the platform's buttons.
+- **A golden-hour dollhouse.** The cottage is built in code around CC0 models (see CREDITS.md): four rooms cut open at the
+  front with timber frames, wainscot, patterned wallpaper per room (kitchen tiles, dining stripes, parlour damask, bedroom
+  stars), plank floors, round rugs, curtains, shelves full of jars and books, a fireplace, a front door that swings open when a
+  bear comes home. Outside: a garden path, flowers and grass, a pond with a raft and a rope swing, a well, a honey crane by the front door, a
+  strength tester with a bell, and layered woods.
+- **Light:** a low warm sun with soft shadows aimed at the room in view, a sky light, a room environment for the brass and
+  glass; post: bloom, ACES, a colour grade (warm highlights, cool shadows, and a golden mode for streaks), tilt-shift for the
+  miniature feel, vignette, SMAA. Low quality drops the post and the shadows, not the look.
+- **Palette:** cream `#F7E8CB`, honey `#F2B33D`, cottage red `#C8442F`, moss `#5E8C3A`, the green band `#3FA34D`, cold blue
+  `#5FA8D8`, ink `#1D2440`, wood `#C98A4E`. Too little is always blue with ▼, too much red with ▲, the band green with a ✓.
+- **The cast:** Quaternius' chibi characters with 30 animations, recoloured in code: Goldi (blond, a blue jacket), the
+  woodland folk, and the three bears (Papa in green, Mama in cream with a red band, Baby in red), all with hats from the
+  Wardrobe.
+- **The gauge is a brass thermometer** standing beside each station (glass with a fresnel rim, mercury that wobbles, the band
+  painted on, a ✓ notch), or lying under the sideways pages.
+- **Type:** **Fraunces** Black for the name, page titles and numbers; **Barlow Condensed** ExtraBold for labels and the stamp.
+  Self-hosted woff2 with their OFL licences.
+- **The signature: the red rubber stamp.** JUST RIGHT!, TOO HOT!, the countdown and the winner are slammed down with a hit-stop
+  and a thump; perfects use the player's own ink.
+
+## Animation and feel
+
+- **Every page is a small scene that acts:** Goldi works the stove under a rattling pot; lowers herself onto Baby Bear's chair as the
+  gauge fills (the sit-down clip follows the gauge) and goes over backwards when it snaps, the pieces bursting out; pumps a
+  balloon until it pops; fluffs and flops onto the pillow; blows on a spoon; pours milk from a jug held in both hands while
+  standing on a stool; pushes a bowl down the table; swings a honey jar on a crane; hits a strength tester to ring the bell;
+  swings from the rope over the pond onto the raft (or into the water).
+- **Characters** blend their clips (crossfades), look at what they're doing, and react: a yes, a no, a stumble, a cheer.
+- **Juice:** hit-stop on stamps and cracks, directional shake, pooled particles (sparkles, crumbs, foam, steam, splashes,
+  feathers, splinters, confetti), the camera leaning in while you hold and punching in on a perfect, slow glides with an arc from
+  room to room, the reveal tokens dropping in one by one, counts ticking, buttons pressing.
+- **Feel:** the hold is timed from the input events, never from frames; the scene answers in the same frame; 60 fps with
+  pooled effects and shaders compiled up front; the platform's quality setting picks high, medium or low. Reduced motion: no shake, push or
+  flash.
 
 ## Sound
 
-All synthesized (Web Audio), through one mixer.
-- **The holding tone:** a soft triangle tone that rises with the gauge (220 → 880 Hz) and gains a chime layer inside the band:
-  you can hear the green.
-- **Pages:** porridge bubbles and a sizzle; chair creaks and a CRACK (noise burst + low thump); pillow whumps on every pump;
-  milk glugs; toaster ticks and a pop-ding; balloon squeak and POP; knife scrape; jar clink (or crash); a big bell DING; bowl
-  scrape and clatter; breath for the spoon; rope whoosh and a splash.
-- **Verdicts:** perfect = bright ding + stamp thump; in the band = a pluck; a big miss = a sad trombone; the crown in the reveal = a
-  little fanfare.
-- **The bears:** growls on the countdown and when one comes home, footsteps on every step along the path, a roar at the door.
-- **Music:** a folk-band polka from a small sequencer in G (oom-pah bass, plucked chords, a fiddle-like lead with vibrato,
-  woodblock), 112 bpm, rising to 140 by the last page; only bass and plucks, quieter, in the lobby; ducked while you hold.
+All made with Web Audio: the holding tone (its pitch is the gauge; it chimes inside the band), each station's own layered
+noises (bubbles, creaks and a CRACK, pumps and a POP, glugs, a toaster ding, a bell, a splash), verdicts, the bears' growls and
+the door bang, and a folk band that builds with the run (bass and plucks, then the fiddle, then claps and a glockenspiel, the
+whole band on a streak), ducked while you hold.
+
+## Every screen
+
+The 3D world fills the screen at every size; the HTML UI floats over it. The camera frames each view inside the part of the
+screen the menus leave free (beside the Wardrobe panel, above a phone's lobby cards). The top-left (or `ow.ui.reserved`) stays
+clear.
+
+- **Title:** the cottage from the front path, the stamp, Play, the rank, honey, today's tasks, perfects in the woods today.
+- **The bears' table:** the lobby (above), with the solo modes beside it (below it on an upright phone).
+- **Page:** "Page 4 of 12" and the page name slammed in, the twist's tag, the cue with the Space key or a fingertip. HUD: the
+  page pips (coloured by how each went), the other players' faces (wiggle = holding), the score on a wooden sign, honey, the
+  streak medallion, the bears home (paws, bottom left) and the charms held.
+- **Reveal:** the giant thermometer over the parlour fire with everyone's face on it, standings below, "Space to go on".
+- **Podium:** the winner crowned in Baby Bear's little chair, everyone around it waving, confetti, the bears walking in from
+  the dining room.
+- **The Bears' Cupboard, run over, daily over, the Storybook, the Wardrobe, pause, room closed.**
+- Phones: 390×844 and 844×390 both work; nothing under the platform's buttons.
 
 ## Store art and the trailer
 
-- **Cover** (thumb-1): the porridge pot steaming, the big thermometer with its green band, six players' markers clustered on
-  it, the JUST RIGHT stamp, the three bears peering through the round window.
-- **Action** (thumb-2): Goldilocks dropping as the little chair cracks (the heart-backed chair snapping, splinters), CRACK!
-  stamped, the bears roaring at the window.
-- **Win** (thumb-3): the podium: the winner crowned in Baby Bear's little chair, second and third in the bigger ones, places on
-  the rails, the bears in the doorway ("Someone's in my chair!"), oats for confetti, the JUST RIGHT stamp.
-- **Multi** (thumb-4): a reveal with eight markers on the gauge, the crown on the closest, the stamp, the standings.
-- **Icon:** Goldilocks peeking over a red bowl of porridge on storybook blue, full bleed. No text.
-- **Badges:** a symbol on a coloured disc each (a check, stars, a flame, a broken chair, a bowl with 10, Papa Bear's head, a
-  calendar, an open book, a crown).
-- **Trailer** (`store/trailer.mp4`, 23 s): real play captured with `?autoplay=1&pages=8` (the bot brain plays for the local
-  player; `&clumsy=1` lets go late, for the misses), cut hard: the porridge held into the green and stamped JUST RIGHT! with
-  its reveal, then TOO HOT, TOO FLUFFY and TOO HARD, the rope swing and its reveal, the podium, and the title's stamp.
-- `?poster=<name>` draws one staged frame for the store art; `<name>.390x844` draws it at a phone's size, to check layouts
-  (`lobby`, `runover`, `daily`, `shelf` exist for that, and `page-<id>` / `page-<id>-<gauge %>` for one page as in a match).
-
-## Originality check
-
-- **Resembles:** microgame collections (quick varied minigames), golf-style "stop the meter" bars, party-game minigame hubs.
-- **What a player notices in the first minute that is different:** one verb for everything; no pass/fail: every page is scored
-  by how close you got, and **everyone's marks land on the same gauge at once** (the reveal is the joke and the brag); every page
-  is a different *motion* to learn (lagging milk, a gliding bowl, a cushioned chair, growing swings) rather than a different
-  control; Goldilocks's "too hot / too cold / just right" is the scoring itself; the bears are the clock of the match and your
-  lives alone; a mid-century picture-book look with a red stamp.
-
-## Changes from the spec, and why
-
-- **No "fake band" twist.** A decoy band breaks "understood in seconds". In its place: **Foggy!** (the gauge clouds over: play by
-  rhythm), which tests the same mastery without lying to the player.
-- **Twelve pages:** "Wind the music box" is out (its clicks felt like the pillow's pumps). "Stack the honey jars" became a
-  pendulum drop onto a crate, and two motions were added: the gliding **Bowl Slide** and **Cool the Spoon** (the gauge falls).
-  The Door and the springy Honey Scale were built on paper and cut: neither read in a second.
-- **The intro is part of each round** (`introSeconds: 0`, 1.5 s into the round): the page is dealt before it's drawn, so the
-  band, the object and "Hold" show together from the first frame.
-- **The solo miss rule is one line:** outside the green (or asleep) = a bear comes home.
-- **The Before the Bears badge is 2,500** (1,000 comes after about 12 pages for an average player). Final value set by the sims.
-- **The last page of a match is worth double**, so a player behind can still catch up.
-- **Bots fill to six seats** (up to eight real players): enough of a crowd for the reveal, quicker to read on a phone.
-- **Goldilocks is drawn**; players are their avatar heads on spoons, at the table and on the podium (the spec left this open).
-- **The daily has no leaderboard** (platform boards never reset): today's best and a day streak instead.
+- `?poster=<name>` stages one deterministic frame with the game's own renderer: **cover** (Goldi at the three bowls with
+  Papa Bear in the doorway and the stamp), **action** (Goldi in the air off the rope swing), **win** (the podium), **multi**
+  (eight at the bears' table), **icon** (Goldi holding a steaming bowl, on a brass medal) and **badge-<id>** (a modelled
+  subject on a coloured disc behind a brass rim). Rendered with `_tools/originals/posters.mjs`.
+- `?poster=dev-…` draws development pictures (the cast, a page mid-hold or after its verdict, any camera, the portraits).
+- **Trailer** (`store/trailer.mp4`): real play captured with `?autoplay=1` (the bot brain plays for the local player;
+  `&clumsy=1` for misses), with the game's own sound.
 
 ## Tech
 
-Canvas 2D, plain ES modules in `game/` (`"dir": "game"`, no build), drawn at `ow.settings.pixelRatio(2)`. Pure modules (no
-`window`, `document` or SDK at import), tested with `node --test`: `pages.js` (the twelve motions, `evaluate`), `plan.js` (match
-pages, solo levels, the daily), `brain.js` (the folk and the attract/autoplay player), `stage.js` (the hold clock), `rng.js`.
-Around them: `net.js` (join options, `createMatch`/`createHost`/`createBots` from `/__onceworlds/v1/`, marks and the skip),
-`kit.js` (palette, type, shapes, Goldilocks, the bears, the folk, the stamp), `gauge.js`, `rooms.js` (the kitchen and the
-clearing, cached per size), `scenes.js` (the twelve scenes and their bursts), `view.js` (one page on screen, shared by play, the
-title and the posters), `fx.js` (pooled particles, stamps with hit-stop, trauma² shake), `layout.js` (HUD and stage around the
-platform's reserved areas), `screens.js` (HUD, intro, prompt, reveal, countdown, lobby, podium, solo screens), `ui.js` (the real
-buttons over the canvas), `audio.js` (synthesized sound and the polka), `poster.js`, `main.js`. Particles pooled (220, 80 on low
-quality). Poster mode (`?poster=`) skips the SDK and draws one staged frame.
+three.js 0.186 with postprocessing, built by Vite into `dist/` (`"dir": "dist"`). `src/core` is pure and tested with
+`node --test`: `pages.js` (the twelve motions, `evaluate`), `plan.js` (match pages, levels, the daily), `run.js` (Before the
+Bears), `charms.js`, `progress.js` (ranks, honey, the Wardrobe, profiles), `tasks.js`, `brain.js` (the folk and the
+autoplay hand), `stage.js` (the hold clock), `net.js` (room, match, marks), `rng.js`. Around them: `gfx/` (renderer and post,
+asset loading, the cast with its animation API, the camera rig, particles, palette), `world/` (the cottage, the twelve stations,
+props made in code, the gauge, hats, textures), `play/world.js` (what's on show: pages, the table, the reveal, the podium, the
+Wardrobe, the bears), `ui/` (HTML screens and the HUD), `audio/`, `dev/` (posters), `app.js` (the flow and input).
+Models are merged by `tools/assets.mjs` into three meshopt-compressed GLBs (about 4 MB); the whole build is about 7.5 MB.
 
-## Risks
+**Tests** (`npm test`): every page's motion, scoring edges and `readPage`; the stage; match, daily and run plans; bots and
+balance simulations; Before the Bears runs, charms, the boss, ranks, profiles, the Wardrobe, honey and tasks; the room through a
+fake hub running the platform's own match helpers; and that badges, store art, shared data keys and Wardrobe items match the
+game.
 
-- **"It's all the same button."** Each page's motion and consequence must be different and readable at a glance; two pages
-  that didn't reach the bar were cut.
-- **Input fairness across devices:** event timestamps, not frames; blur and cancel let go; the window is generous.
-- **The "keeps going" pages feel unfair to beginners:** they never come before page 4, they carry a first-time hint ("It keeps
-  pouring!", "It keeps sliding!"), and the reveal shows where the milk actually landed.
-- **Eight markers on a phone gauge:** a 1D label layout fans names to both sides with leader lines; tested at 390×844.
-- **Twelve scenes of art:** one shared kit (room, table, window, Goldilocks and bear rigs, gauges) so every page is one object
-  and its motion, in one look.
-- **Avatars that fail to load:** a coloured disc with the initial, same frame.
-- **A player in a solo run when strangers ready up:** the run banks its score ("The bears are back!") and they watch the match.
+## What the revamp changed
+
+See REVAMP.md for the teardown. The flat 2D canvas version was replaced by the 3D cottage; Before the Bears became a run with
+charms, a boss and lives you can see; ranks, honey, the Wardrobe, daily tasks, the shared woods counter and the daily board
+were added; every page got a staged scene with real character animation, effects and its own sound.
