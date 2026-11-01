@@ -1,6 +1,7 @@
 // The renderer: three.js with soft sun shadows, a warm sky light, and (above low quality) a post chain of bloom, a colour
 // grade (warm highlights, cool shadows, a golden mode for streaks), tilt-shift for the dollhouse feel, vignette and AgX.
 import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EffectComposer, RenderPass, EffectPass, BloomEffect, VignetteEffect, ToneMappingEffect, ToneMappingMode, SMAAEffect, Effect, TiltShiftEffect, BlendFunction } from 'postprocessing';
 
 const GRADE_FRAG = /* glsl */ `
@@ -50,9 +51,9 @@ export function createGfx(canvas, { poster = false } = {}) {
   camera.position.set(0, 4, 12);
 
   // Light: a low golden sun with soft shadows, a sky/ground fill, and the environment for a little sheen.
-  const hemi = new THREE.HemisphereLight(0xcfe4ff, 0x8a5a3a, 1.15);
+  const hemi = new THREE.HemisphereLight(0xbcd6f0, 0x7a4a2a, 0.75);
   scene.add(hemi);
-  const sun = new THREE.DirectionalLight(0xffd29a, 3.4);
+  const sun = new THREE.DirectionalLight(0xffcf8f, 3.1);
   sun.position.set(-8, 10, 7);
   sun.castShadow = true;
   sun.shadow.bias = -0.0004;
@@ -67,6 +68,13 @@ export function createGfx(canvas, { poster = false } = {}) {
   sc.bottom = -8;
   scene.add(sun);
   scene.add(sun.target);
+  // A soft room for reflections: metal, glass and glaze get something to show.
+  try {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environmentIntensity = 0.32;
+    pmrem.dispose();
+  } catch {}
 
   let quality = 'high';
   let composer = null;
@@ -82,8 +90,8 @@ export function createGfx(canvas, { poster = false } = {}) {
     composer?.dispose();
     composer = null;
     if (quality === 'low') {
-      renderer.toneMapping = THREE.AgXToneMapping;
-      renderer.toneMappingExposure = 1.05;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 0.95;
       return;
     }
     renderer.toneMapping = THREE.NoToneMapping;
@@ -91,7 +99,7 @@ export function createGfx(canvas, { poster = false } = {}) {
     composer.addPass(new RenderPass(scene, camera));
     bloom = new BloomEffect({ intensity: 0.9, luminanceThreshold: 0.82, luminanceSmoothing: 0.25, mipmapBlur: true, radius: 0.7 });
     grade = new GradeEffect();
-    toneOnly = new ToneMappingEffect({ mode: ToneMappingMode.AGX });
+    toneOnly = new ToneMappingEffect({ mode: ToneMappingMode.ACES_FILMIC });
     const vignette = new VignetteEffect({ offset: 0.32, darkness: 0.52 });
     tilt = new TiltShiftEffect({ offset: 0.0, rotation: 0, focusArea: 0.62, feather: 0.32, kernelSize: 2 });
     tilt.blendMode.opacity.value = 0;

@@ -27,7 +27,7 @@ function rabbitLook({ fur, jacket, trim, hair, pink = '#e58aa0' }) {
 }
 
 /** Bears from the panda: fur, a face (muzzle) colour on the head's white, a jacket, its trim and a band. */
-function bearLook({ fur, face, jacket, trim, band }) {
+function bearLook({ fur, face, jacket, trim, band, ears, noBand = false }) {
   return {
     '#403c57': fur,
     '#e9e9e9': jacket,
@@ -35,14 +35,15 @@ function bearLook({ fur, face, jacket, trim, band }) {
     '#242424': '#1a1210',
     '#ec8742': band,
     '#8a97ac': band,
-    head: { '#e9e9e9': face },
+    bear: { fur, face, nose: '#2a1810', ears: ears ?? fur },
+    noBand,
   };
 }
 
 export const BEARS = {
-  papa: { kind: 'bear', scale: 1.5, look: bearLook({ fur: '#5a3620', face: '#c79a6c', jacket: '#3f6b3a', trim: '#F2B33D', band: '#2b4a2a' }) },
-  mama: { kind: 'bear', scale: 1.25, look: bearLook({ fur: '#8a5634', face: '#e2bd8f', jacket: '#F3E6D2', trim: '#C8442F', band: '#C8442F' }) },
-  baby: { kind: 'bear', scale: 0.95, look: bearLook({ fur: '#a8703f', face: '#efcfa2', jacket: '#C8442F', trim: '#F7E8CB', band: '#F2B33D' }) },
+  papa: { kind: 'bear', scale: 1.75, look: bearLook({ fur: '#5a3620', face: '#c79a6c', ears: '#4a2b18', jacket: '#3f6b3a', trim: '#F2B33D', band: '#2b4a2a', noBand: true }) },
+  mama: { kind: 'bear', scale: 1.45, look: bearLook({ fur: '#8a5634', face: '#e2bd8f', ears: '#73452a', jacket: '#F3E6D2', trim: '#C8442F', band: '#C8442F' }) },
+  baby: { kind: 'bear', scale: 1.1, look: bearLook({ fur: '#a8703f', face: '#efcfa2', ears: '#8f5c32', jacket: '#C8442F', trim: '#F7E8CB', band: '#F2B33D' }) },
 };
 
 /** Characters a player can be (unlocked in the Wardrobe). `kind` is the cast member; the look recolours it. */
@@ -53,7 +54,7 @@ export const CHARACTERS = {
   sky: { name: 'Sky', kind: 'cyan', look: rabbitLook({ fur: '#f6efe6', jacket: '#1D2440', trim: '#5FA8D8', hair: '#5FA8D8' }) },
   pepper: { name: 'Pepper', kind: 'grey', look: rabbitLook({ fur: '#8f8a90', jacket: '#6E4127', trim: '#F2B33D', hair: '#ece7df' }) },
   bao: { name: 'Bao', kind: 'bear', look: { '#ec8742': '#C8442F' } },
-  cub: { name: 'Cub', kind: 'bear', look: bearLook({ fur: '#a8703f', face: '#efcfa2', jacket: '#2f4f8f', trim: '#F2B33D', band: '#F2B33D' }) },
+  cub: { name: 'Cub', kind: 'bear', look: bearLook({ fur: '#a8703f', face: '#efcfa2', ears: '#8f5c32', jacket: '#2f4f8f', trim: '#F2B33D', band: '#F2B33D' }) },
 };
 
 /** The rival bunnies (bots): a name, a look and a habit (brain.js FOLK has their skill). */

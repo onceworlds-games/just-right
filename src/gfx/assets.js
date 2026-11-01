@@ -125,6 +125,7 @@ export async function loadAssets(base = './models/', onProgress = () => {}) {
       m.castShadow = true;
       m.receiveShadow = true;
       m.frustumCulled = false;
+      if (look.noBand && /Headband/i.test(m.name)) m.visible = false;
     });
     return root;
   }
@@ -160,13 +161,37 @@ const hex2 = (r, g, b) => '#' + [r, g, b].map((c) => c.toString(16).padStart(2, 
 function paintVertices(mesh, atlas, mat, look) {
   const g = mesh.geometry;
   const uv = g.getAttribute('uv');
-  const n = g.getAttribute('position').count;
+  const pos = g.getAttribute('position');
+  const n = pos.count;
   const colors = new Float32Array(n * 3);
   const px = atlas(mat?.map);
   const skinIndex = g.getAttribute('skinIndex');
   const skinWeight = g.getAttribute('skinWeight');
   const bones = mesh.skeleton?.bones ?? [];
   const c = new THREE.Color();
+  // Which vertices ride the head (by their strongest bone), and the head's box, for looks that paint the face apart.
+  const onHead = new Uint8Array(n);
+  const lo = [Infinity, Infinity, Infinity];
+  const hi = [-Infinity, -Infinity, -Infinity];
+  if ((look.head || look.bear) && skinIndex && bones.length) {
+    for (let i = 0; i < n; i++) {
+      let best = 0;
+      let bw = -1;
+      for (let k = 0; k < 4; k++) {
+        const w = skinWeight.getComponent(i, k);
+        if (w > bw) (bw = w), (best = skinIndex.getComponent(i, k));
+      }
+      if (/^(Head|Neck)/.test(bones[best]?.name ?? '')) {
+        onHead[i] = 1;
+        const p = [pos.getX(i), pos.getY(i), pos.getZ(i)];
+        for (let k = 0; k < 3; k++) {
+          if (p[k] < lo[k]) lo[k] = p[k];
+          if (p[k] > hi[k]) hi[k] = p[k];
+        }
+      }
+    }
+  }
+  const frac = (i, k) => (([pos.getX(i), pos.getY(i), pos.getZ(i)][k] - lo[k]) / Math.max(1e-9, hi[k] - lo[k]));
   for (let i = 0; i < n; i++) {
     let hex = '#cccccc';
     if (px && uv) {
@@ -178,17 +203,16 @@ function paintVertices(mesh, atlas, mat, look) {
       hex = hex2(px.data[o], px.data[o + 1], px.data[o + 2]);
     } else if (mat?.color) hex = '#' + mat.color.getHexString();
     let out = look[hex] ?? hex;
-    // Some looks colour the head apart from the body (a bear's face on a panda's white).
-    if (look.head && skinIndex && bones.length) {
-      let best = 0;
-      let bw = -1;
-      for (let k = 0; k < 4; k++) {
-        const w = skinWeight.getComponent(i, k);
-        if (w > bw) (bw = w), (best = skinIndex.getComponent(i, k));
-      }
-      const bn = bones[best]?.name ?? '';
-      if (/^Head|Neck/.test(bn) && look.head[hex]) out = look.head[hex];
-    }
+    if (onHead[i] && look.bear) {
+      // A bear from the panda: the whole head in fur, a light muzzle round a dark nose, no eye patches. In the head's box
+      // (x across, y back to front with the face at low y, z up).
+      const fx = frac(i, 0);
+      const fy = frac(i, 1);
+      const fz = frac(i, 2);
+      const centre = Math.abs(fx - 0.5) < 0.17;
+      if (hex === '#403c57') out = fy < 0.38 && centre && fz > 0.2 && fz < 0.72 ? look.bear.nose : fz > 0.78 ? look.bear.ears : look.bear.fur;
+      else if (hex === '#e9e9e9') out = fy < 0.24 && Math.abs(fx - 0.5) < 0.19 && fz > 0.06 && fz < 0.6 ? look.bear.face : look.bear.fur;
+    } else if (onHead[i] && look.head?.[hex]) out = look.head[hex];
     c.set(out);
     colors[i * 3] = c.r;
     colors[i * 3 + 1] = c.g;

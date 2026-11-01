@@ -61,6 +61,8 @@ export function readPage(raw) {
     ph: (raw.ph ?? 0) / 1000,
     n: num(raw.n, 0, 999) ? Math.floor(raw.n) : 0,
     x2: raw.x2 === 1 || raw.x2 === true,
+    pr: num(raw.pr, 10, 40) ? raw.pr / 1000 : 0.02,
+    bo: num(raw.bo, 1, 3) ? Math.floor(raw.bo) : 0,
   };
   if (!page.twists.includes(P.tw)) P.tw = 0;
   P.win = windowOf(P);
@@ -195,8 +197,8 @@ export function autoReleaseAt(P) {
 
 // ---------------------------------------------------------------- scoring
 
-/** The perfect radius: ±0.02 of the gauge, at most half the band. */
-export const perfectRadius = (w) => Math.min(0.02, w / 2);
+/** The perfect radius: ±0.02 of the gauge (or a charm's wider notch), at most half the band. */
+export const perfectRadius = (w, pr = 0.02) => Math.min(pr || 0.02, w / 2);
 
 /**
  * Score a release: h ms held (null: never pressed), t ms after the page began when it was let go.
@@ -209,7 +211,7 @@ export function evaluate(P, h, t) {
   if (P.page.pops && motion(P, (h / 1000) * P.sp) >= popLine(P)) return { v, c, d: Math.abs(v - c), s: 0, k: 'pop' };
   const d = Math.abs(v - c);
   const w = P.w;
-  const pr = perfectRadius(w);
+  const pr = perfectRadius(w, P.pr);
   let s;
   let k;
   if (d <= pr + 1e-9) {

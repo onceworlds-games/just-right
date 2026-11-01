@@ -23,6 +23,8 @@ export const ANIM = {
   sit: 'Sitting_Idle',
   sitEat: 'Sitting_Eating',
   sitEnd: 'Sitting_End',
+  sword: 'Sword',
+  runHold: 'Run_Holding',
   panStart: 'Pan_Start',
   pan: 'Pan_Loop',
   panEnd: 'Pan_End',
@@ -33,7 +35,9 @@ export const ANIM = {
   build: 'Assembly_Loop',
   buildEnd: 'Assembly_End',
 };
-const ONCE = new Set(['Jump', 'Jump_Land', 'HitReact', 'Death', 'Yes', 'No', 'Wave', 'Punch', 'Sitting_Start', 'Sitting_End', 'Pan_Start', 'Pan_End', 'Chop_Start', 'Chop_End', 'Assembly_Start', 'Assembly_End', 'Duck']);
+const _va = new THREE.Vector3();
+const _vb = new THREE.Vector3();
+const ONCE = new Set(['Sword', 'Jump', 'Jump_Land', 'HitReact', 'Death', 'Yes', 'No', 'Wave', 'Punch', 'Sitting_Start', 'Sitting_End', 'Pan_Start', 'Pan_End', 'Chop_Start', 'Chop_End', 'Assembly_Start', 'Assembly_End', 'Duck']);
 
 export class Character {
   constructor(assets, kind, look, { scale = 1, name = '' } = {}) {
@@ -57,9 +61,14 @@ export class Character {
     this.hop = 0;
     this.hopV = 0;
     this.head = null;
+    this.bones = {};
     this.model.traverse((o) => {
+      if (o.isBone) this.bones[o.name] = o;
       if (o.isBone && o.name === 'Head') this.head = o;
     });
+    // Three's loader drops the dots: Middle1.R is Middle1R.
+    this.handL = this.bones.Middle1L ?? this.bones.LowerArmL ?? null;
+    this.handR = this.bones.Middle1R ?? this.bones.LowerArmR ?? null;
     this.headRest = this.head ? this.head.quaternion.clone() : null;
     this.lookYaw = 0;
     this.lookTarget = 0;
@@ -131,6 +140,29 @@ export class Character {
     this.scrubbing = name;
   }
 
+  /** World position between the two hands (where a held thing goes). */
+  hands(out = new THREE.Vector3()) {
+    if (!this.handL || !this.handR) return this.group.getWorldPosition(out);
+    const a = this.handL.getWorldPosition(_va);
+    const b = this.handR.getWorldPosition(_vb);
+    return out.addVectors(a, b).multiplyScalar(0.5);
+  }
+  /** World position of one hand ('L' or 'R'). */
+  hand(side = 'R', out = new THREE.Vector3()) {
+    const b = side === 'L' ? this.handL : this.handR;
+    return b ? b.getWorldPosition(out) : this.group.getWorldPosition(out);
+  }
+  /** World position of the head bone (for breath, steam from the ears, a hat). */
+  headAt(out = new THREE.Vector3()) {
+    return this.head ? this.head.getWorldPosition(out) : this.group.getWorldPosition(out);
+  }
+  /** Puts it somewhere, facing ry. */
+  place(x, y, z, ry = 0) {
+    this.group.position.set(x, y, z);
+    this.group.rotation.set(0, ry, 0);
+    this.group.visible = true;
+    return this;
+  }
   /** A springy squash (positive) or stretch (negative). */
   kick(amount) {
     this.squashV += amount * 9;
