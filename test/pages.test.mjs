@@ -166,6 +166,9 @@ test('stage: a hold timed from the events, capped by the window and the travel',
   const st = createStage();
   const P = page('toast', { c: 500, w: 60 });
   st.begin(P, 'k1', 1000);
+  assert.equal(st.press(700), true);
+  assert.equal(st.release(800), null, 'a tap during the intro is forgiven');
+  assert.equal(st.pressAt, null);
   assert.equal(st.press(900), true, 'a hold from the intro counts from the start');
   assert.equal(st.pressAt, 1000);
   assert.equal(st.press(1200), false, 'one hold per page');

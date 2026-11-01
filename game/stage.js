@@ -61,6 +61,11 @@ export function createStage() {
     /** It comes up at `ts`. Returns the result, or null if there was nothing to let go. */
     release(ts, how = 'player') {
       if (!s.P || s.pressAt === null || s.releaseAt !== null) return null;
+      // Let go again before play began (a tap through the intro): nothing happened, press again.
+      if (ts < s.start && how === 'player') {
+        s.pressAt = null;
+        return null;
+      }
       const end = Math.max(ts, s.start);
       let h = Math.max(0, end - s.pressAt);
       h = Math.min(h, s.auto, Math.max(0, s.start + s.P.win - s.pressAt));
