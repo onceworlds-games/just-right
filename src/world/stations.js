@@ -314,7 +314,7 @@ export function createStations(ctx) {
     stations.pillow = {
       id: 'pillow',
       group: g,
-      frame: { target: [BX - 0.05, 0.5, BZ - 0.1], from: [-0.4, 0.42, 1], radius: 1.15 },
+      frame: { target: [BX - 0.22, 0.5, BZ - 0.1], from: [0.03, 0.42, 1], radius: 1.15 },
       meter: { at: [BX + 0.62, 0, BZ + 0.55], s: 0.55 },
       enter() {
         Object.assign(s, { lastPump: -1, squish: 0, fluff: 0.15, flop: 0, onBed: false });
@@ -349,9 +349,10 @@ export function createStations(ctx) {
       verdict(r) {
         const G = goldi();
         if (r.k === 'perfect' || r.k === 'good') {
+          // She flops back onto the bed, head on the pillow.
           s.onBed = true;
-          G.group.rotation.y = Math.PI;
-          G.play(ANIM.fall, { fade: 0.15 });
+          G.group.rotation.y = 0;
+          G.play(ANIM.fall, { fade: 0.12, at: 0.3 });
           sparkle(BX, top + 0.3, BZ - 0.42, r.k === 'perfect' ? 22 : 10);
           sound('flop');
         } else if (r.k === 'over') {
