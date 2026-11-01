@@ -428,14 +428,18 @@ export function buildCottage(gfx, assets) {
   add(beam);
 
   // The front door in the kitchen's end wall (the bears come home through it).
+  // Hinged on its back edge (the side its hinges are drawn on); it swings out into the garden.
   const doorPivot = new THREE.Group();
-  doorPivot.position.set(X0 - WT / 2, 0, BACK + D * 0.38 + 0.47);
+  doorPivot.position.set(X0 - WT / 2, 0, BACK + D * 0.38 - 0.475);
   const door = assets.prop('door');
-  fit(door, { h: 1.78 });
-  door.rotation.y = 0;
-  seat(door, 0, 0, -0.46);
+  // The model runs its width along z (0.925 × 2.1 m): squeeze it into the arched hole.
+  door.scale.set(1.82 / 2.1, 1.82 / 2.1, 0.97 / 0.925);
+  seat(door, 0, 0.002, 0.485);
   doorPivot.add(door);
   add(doorPivot);
+  let doorOpen = 0;
+  let doorTarget = 0;
+  let doorV = 0;
 
   // ---------------------------------------------------------------- the kitchen
   const K = rooms.kitchen;
@@ -635,7 +639,16 @@ export function buildCottage(gfx, assets) {
     doorPivot,
     chimneyTop,
     sky,
+    /** 0 shut … 1 wide open; `bang` flings it there with a bounce. */
+    door(open, { bang = false } = {}) {
+      doorTarget = open;
+      if (bang) doorV = 9;
+    },
     update(dt, t, camera) {
+      // The door on a spring: a bang overshoots and wobbles back.
+      doorV += ((doorTarget - doorOpen) * 60 - doorV * 7) * Math.min(dt, 0.05);
+      doorOpen = Math.max(-0.02, Math.min(1.15, doorOpen + doorV * Math.min(dt, 0.05)));
+      doorPivot.rotation.y = -doorOpen * 1.7;
       pond.material.uniforms.time.value = t;
       pond.material.uniforms.rippleT.value += dt;
       fireLight.intensity = 2.6 + Math.sin(t * 11) * 0.3 + Math.sin(t * 17.3) * 0.25 + Math.sin(t * 5.1) * 0.2;

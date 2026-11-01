@@ -38,10 +38,11 @@ function rate(state, key, perSec, dt) {
 }
 
 /** Parts flying apart: each gets a velocity and spin, falls, bounces on a floor and settles. */
+/** Parts burst outward from their group's centre (legs splay, the back falls back), tumbling, bouncing on the floor. */
 function debris(parts, { floor = 0, power = 1.6 } = {}) {
   const live = parts.map((m) => ({
     m,
-    v: V((Math.random() - 0.5) * 2.2 * power, (1.2 + Math.random() * 1.6) * power, (Math.random() - 0.2) * 1.6 * power),
+    v: V((m.position.x * 7 + (Math.random() - 0.5) * 0.9) * power, (0.7 + Math.random() * 1.1) * power, (m.position.z * 7 + (Math.random() - 0.5) * 0.9) * power),
     w: V((Math.random() - 0.5) * 14, (Math.random() - 0.5) * 14, (Math.random() - 0.5) * 14),
   }));
   return (dt) => {
@@ -215,7 +216,8 @@ export function createStations(ctx) {
       group: g,
       frame: { target: [CX + 0.12, 0.5, CZ + 0.2], from: [-0.35, 0.3, 1], radius: 0.95 },
       meter: { at: [CX + 0.82, 0, CZ - 0.15], s: 0.52, axis: 'down' },
-      enter() {
+      /** Whole again (the podium sits the winner in it). */
+      rest() {
         broken = null;
         for (const p of chair.parts) {
           p.position.copy(p.userData.home);
@@ -223,6 +225,11 @@ export function createStations(ctx) {
         }
         chair.group.scale.setScalar(CS);
         chair.group.rotation.set(0, RY, 0);
+      },
+      /** Where (and which way) she sits in it. */
+      seat: { x: CX + FX * 0.24, z: CZ + FZ * 0.24, ry: RY },
+      enter() {
+        this.rest();
         const [x, z] = sitAt(0);
         goldi().place(x, 0, z, RY);
         goldi().scrub(ANIM.sitStart, 0);
@@ -249,8 +256,7 @@ export function createStations(ctx) {
           chair.group.rotation.y = RY;
         } else {
           broken(dt);
-          // She lands on her bottom.
-          G.group.position.y = Math.max(-0.28, G.group.position.y - dt * 3.5);
+          G.group.position.y = Math.min(0, G.group.position.y + dt);
         }
       },
       verdict(r) {
@@ -263,7 +269,8 @@ export function createStations(ctx) {
           fx.emit(16, CX, 0.3, CZ, { shape: SHAPE.crumb, color: ['#c98a4e', '#8a5530'], speed: 2.2, spread: 1.3, size: [0.03, 0.06], life: [0.8, 1.4], gravity: 9, floor: 0.01, drag: 0.4, spin: 10 });
           ctx.shake(0.7, 1, 1);
           ctx.hitstop(110);
-          G.play(ANIM.hit, { then: ANIM.sit, thenFade: 0.3 });
+          // Down on her bottom among the pieces, then over on her back.
+          G.play(ANIM.fall, { fade: 0.1, at: 0.3 });
           sound('crack');
         } else if (r.k === 'perfect' || r.k === 'good') {
           G.play(ANIM.sit, { fade: 0.25 });
@@ -374,7 +381,7 @@ export function createStations(ctx) {
       return t;
     }
     const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 0.02, 24), new THREE.MeshStandardMaterial({ color: '#f7f1e6', roughness: 0.3 }));
-    plate.position.set(-5.85, 0.665, -1.55);
+    plate.position.set(-5.97, 0.665, -1.55);
     plate.castShadow = true;
     plate.receiveShadow = true;
     root.add(plate);
@@ -822,8 +829,8 @@ export function createStations(ctx) {
   {
     const g = new THREE.Group();
     root.add(g);
-    const GX = -5.45;
-    const GZ = -1.62;
+    const GX = -5.55;
+    const GZ = -1.47;
     const glass = makeGlass();
     glass.group.position.set(GX, 0.655, GZ);
     glass.group.scale.setScalar(1.15);
@@ -852,19 +859,32 @@ export function createStations(ctx) {
     g.add(puddle);
     const spoutW = V();
     const s = { tilt: 0, pour: 0, spill: 0 };
+    const RY = -1.6;
+    let stand = null;
     const surface = (v) => 0.655 + glass.surfaceY(v) * 1.15;
     stations.milk = {
       id: 'milk',
       group: g,
-      frame: { target: [GX - 0.25, 1.0, GZ + 0.2], from: [0.15, 0.25, 1], radius: 0.82 },
-      meter: { at: [GX + 0.38, 0.655, GZ - 0.06], s: 0.4 },
+      frame: { target: [GX + 0.12, 0.9, GZ + 0.05], from: [-0.45, 0.28, 1], radius: 1.0 },
+      meter: { at: [GX - 0.42, 0.655, GZ - 0.3], s: 0.4 },
       enter(P) {
         Object.assign(s, { tilt: 0, pour: 0, spill: 0 });
         puddle.scale.setScalar(0.001);
         stream.visible = false;
         glass.set(0, P.c0, P.w);
-        goldi().place(-6.05, 0.34, -1.2, 0.95);
-        goldi().play(ANIM.hold);
+        const G = goldi();
+        G.play(ANIM.hold, { fade: 0 });
+        // Stand her (and her stool) where her hands, holding the jug, reach the glass.
+        if (!stand) {
+          G.place(-5.1, 0.34, -1.15, RY);
+          G.update(1 / 60);
+          G.group.updateMatrixWorld(true);
+          G.hands(_v);
+          stand = [-5.1 + (GX + 0.27 - _v.x), -1.15 + (GZ + 0.1 - _v.z)];
+          stool.position.x += stand[0] - -6.05;
+          stool.position.z += stand[1] - -1.2;
+        }
+        G.place(stand[0], 0.34, stand[1], RY);
       },
       update(dt, st) {
         const G = goldi();
@@ -873,8 +893,8 @@ export function createStations(ctx) {
         const want = st.holding ? 0.5 + Math.min(1, st.v * 1.4) * 0.9 : 0;
         s.tilt = lerp(s.tilt, want, Math.min(1, dt * (st.holding ? 6 : 4)));
         G.hands(_v);
-        jug.group.position.set(lerp(_v.x, GX - 0.12, 0.5), Math.max(_v.y, 1.08), lerp(_v.z, GZ, 0.55));
-        jug.group.rotation.set(0, -0.35, -s.tilt);
+        jug.group.position.set(_v.x + 0.03, Math.max(_v.y + 0.02, 0.92), _v.z);
+        jug.group.rotation.set(0, RY - Math.PI / 2, -s.tilt);
         jug.group.updateMatrixWorld(true);
         spoutW.copy(jug.spoutTip).applyMatrix4(jug.group.matrixWorld);
         // The stream: on while the jug tips far enough, and for a moment after (the milk in the air).

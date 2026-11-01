@@ -211,7 +211,7 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
   }
 
   // ---------------------------------------------------------------- faces
-  const faceUrl = (key) => `./faces/${key}.png`;
+  const faceUrl = (key) => `./faces/${key}.jpg`;
   const avatars = new Map();
   function avatarOf(id) {
     if (!id || !ow?.player?.avatarUrl) return null;

@@ -2,7 +2,7 @@
 // particles and the camera. The flow tells it what to show (a page, the title, the lobby table, the reveal, the podium); it
 // keeps the time of the pictures (hit-stop and slow motion bend it, never the page's own clock).
 import * as THREE from 'three';
-import { buildCottage, BACK, FRONT } from '../world/cottage.js';
+import { buildCottage, BACK, FRONT, ROOM } from '../world/cottage.js';
 import { createStations } from '../world/stations.js';
 import { createMeter } from '../world/meter.js';
 import { createParticles, SHAPE } from '../gfx/particles.js';
@@ -255,15 +255,19 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     hideSeats();
     reveal.hide();
     me.group.visible = false;
+    // The winner in the little chair, front and centre; the rest stand behind and beside it, like a photograph.
+    const chairSt = stations.chair;
+    chairSt?.rest?.();
+    const seat = chairSt?.seat ?? { x: 2.03, z: -0.72, ry: 0.35 };
     const spots = [
-      { x: 2.25, z: -0.6, ry: 0 },
-      { x: 1.55, z: -0.35, ry: 0.35 },
-      { x: 2.95, z: -0.35, ry: -0.35 },
-      { x: 1.0, z: 0.25, ry: 0.4 },
-      { x: 3.5, z: 0.25, ry: -0.4 },
-      { x: 1.7, z: 0.6, ry: 0.2 },
-      { x: 2.8, z: 0.6, ry: -0.2 },
-      { x: 2.25, z: 0.85, ry: 0 },
+      { x: seat.x, z: seat.z, ry: seat.ry },
+      { x: 1.4, z: -1.15, ry: 0.25 },
+      { x: 2.65, z: -1.15, ry: -0.25 },
+      { x: 0.9, z: -0.85, ry: 0.45 },
+      { x: 3.2, z: -0.85, ry: -0.45 },
+      { x: 0.6, z: -0.35, ry: 0.6 },
+      { x: 3.5, z: -0.35, ry: -0.6 },
+      { x: 0.45, z: 0.15, ry: 0.7 },
     ];
     rows.slice(0, 8).forEach((r, i) => {
       const ch = r.me ? me : seatChar(`seat${i}`, r.def);
@@ -271,10 +275,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
       const sp = spots[i];
       ch.place(sp.x, 0, sp.z, sp.ry);
       ch.group.visible = true;
-      if (i === 0) {
-        ch.group.position.z = -0.6;
-        ch.play(ANIM.sit, { fade: 0 });
-      } else ch.play(i < 3 ? ANIM.wave : ANIM.yes, { then: ANIM.idle });
+      if (i === 0) ch.play(ANIM.sit, { fade: 0 }); else ch.play(i < 3 ? ANIM.wave : ANIM.yes, { then: ANIM.idle });
     });
     // The bears walk in from the dining room.
     bears.papa.place(-0.2, 0, -0.55, Math.PI / 2);
@@ -294,12 +295,14 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
   function setBearsHome(n, { burst = false } = {}) {
     const prev = bearsHome;
     bearsHome = Math.max(0, Math.min(3, n));
+    house.door(bearsHome > 0 ? 0.85 : 0);
     if (burst && bearsHome > prev) bearArrives(bearsHome - 1);
   }
   let bearScare = null;
   function bearArrives(i) {
     const b = [bears.papa, bears.mama, bears.baby][i];
     bearScare = { b, t: 0, i };
+    house.door(0.85, { bang: true });
     sound('growl', { kind: ['papa', 'mama', 'baby'][i] });
     ctx.shake(0.4, 1, 0.6);
   }
@@ -348,7 +351,9 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     for (const [side, spread, back] of plan) {
       let x = tx + rx * side * f.radius * spread + bx * back;
       let z = tz + rz * side * f.radius * spread + bz * back;
-      x = Math.max(-9.15, Math.min(8.75, x));
+      // Stay in the page's room (never inside a partition or through it).
+      const room = Object.values(ROOM).find(([a, b2]) => tx >= a && tx <= b2) ?? [-9.4, 9.0];
+      x = Math.max(room[0] + 0.4, Math.min(room[1] - 0.4, x));
       z = Math.max(BACK + 0.35, Math.min(FRONT - 0.5, z));
       out.push([x, 0, z, Math.atan2(tx - x, tz + 1.5 - z) * 0.8]);
     }
@@ -480,7 +485,8 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
       list.forEach((b, i) => {
         const k = Math.min(1, Math.max(0, (podiumT - 0.6 - i * 0.25) / 2.2));
         const x0 = -0.2 - i * 0.6;
-        b.group.position.x = x0 + k * (1.0 + (2 - i) * 0.1);
+        // Papa out in the room, Mama just through the arch, Baby peeking from the doorway.
+        b.group.position.x = x0 + k * (0.65 + i * 0.2);
         if (k >= 1 && b.currentName === ANIM.walk) {
           b.group.rotation.y = 0.6;
           b.play(i === 0 ? ANIM.no : i === 1 ? ANIM.wave : ANIM.yes, { then: ANIM.idle });

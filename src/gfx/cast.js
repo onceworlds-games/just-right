@@ -98,7 +98,7 @@ export class Character {
     return a;
   }
 
-  /** Crossfades to a clip. opts: { fade (s), speed, then: name to play after a one-shot, restart } */
+  /** Crossfades to a clip. opts: { fade (s), speed, then: name to play after a one-shot, restart, at: start 0-1 in } */
   play(name, opts = {}) {
     const a = this.action(name);
     if (!a) return;
@@ -116,6 +116,7 @@ export class Character {
     a.setEffectiveWeight(1);
     if (this.current && this.current !== a) a.crossFadeFrom(this.current, fade, true);
     a.play();
+    if (opts.at > 0) a.time = Math.min(0.999, opts.at) * a.getClip().duration;
     this.current = a;
     this.currentName = name;
     this.queue = opts.then ? { name: opts.then, opts: { fade: opts.thenFade ?? 0.25 } } : null;

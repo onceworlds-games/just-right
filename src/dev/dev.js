@@ -124,6 +124,46 @@ export async function devScene(name, gfx, assets) {
     document.body.dataset.ready = '1';
     return;
   }
+  if (name.startsWith('dev-faces-')) {
+    // Five faces in a row (256 px cells at 1280×336, under the capture's menu strip): row 0 and 1 the playable cast, then
+    // the folk. Cut into public/faces/.
+    const row = Number(name.slice(10)) || 0;
+    scene.background = new THREE.Color('#f2d6a2');
+    const list = [...Object.keys(CHARACTERS).map((k) => [k, CHARACTERS[k]]), ...Object.keys(FOLK_LOOKS).map((k) => [k, FOLK_LOOKS[k]])];
+    const cols = 5;
+    const cell = 1.0;
+    const chars = [];
+    const head = new THREE.Vector3();
+    list.forEach(([key, def], i) => {
+      if (Math.floor(i / cols) !== row) return;
+      const ch = new Character(assets, def.kind, def.look, { scale: CH * 1.15 * (def.scale ?? 1) });
+      ch.play(ANIM.idle);
+      ch.update(0.4 + (i % 3) * 0.3);
+      ch.group.rotation.y = 0.32;
+      scene.add(ch.group);
+      ch.group.updateMatrixWorld(true);
+      ch.headAt(head);
+      const cx = (i % cols) * cell;
+      ch.group.position.set(cx - head.x, -head.y - 0.12, -head.z);
+      chars.push(ch);
+    });
+    // A long lens from far away: near-orthographic, every head the same size in its cell; the cells fill the bottom 256 px.
+    const rows = 336 / 256;
+    const dist = 80;
+    const midY = (rows - 1) / 2;
+    camera.fov = (2 * Math.atan((rows * cell) / 2 / dist) * 180) / Math.PI;
+    camera.position.set(((cols - 1) * cell) / 2, midY, dist);
+    camera.lookAt(((cols - 1) * cell) / 2, midY, 0);
+    camera.near = 40;
+    camera.far = 120;
+    camera.updateProjectionMatrix();
+    gfx.focusShadow(new THREE.Vector3(2, 0, 0), 6);
+    await document.fonts.ready;
+    gfx.render(1 / 60);
+    gfx.render(1 / 60);
+    document.body.dataset.ready = '1';
+    return;
+  }
   if (name === 'dev-measure') {
     // Sizes of the cast at CH, written on the page.
     const lines = [];

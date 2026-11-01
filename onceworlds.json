@@ -1,26 +1,127 @@
 {
   "slug": "just-right",
   "name": "Just Right",
-  "description": "Hold, release, just right. Before the three bears come home.",
+  "description": "One button: hold, let go, land it just right. Porridge, chairs, pillows and nine more pages of the story, before the three bears come home.",
   "dir": "dist",
   "productionBranch": "main",
   "genre": "Party",
   "icon": "store/icon.png",
-  "thumbnails": ["store/thumb-1.png", "store/thumb-2.png", "store/thumb-3.png", "store/thumb-4.png"],
-  "controls": [
-    { "keys": ["Space", "Click", "Tap"], "action": "Hold, then let go in the green" },
-    { "keys": ["Enter"], "action": "Play, again" },
-    { "keys": ["Esc"], "action": "Back, pause a solo run" }
+  "thumbnails": [
+    "store/thumb-1.png",
+    "store/thumb-2.png",
+    "store/thumb-3.png",
+    "store/thumb-4.png"
   ],
+  "controls": [
+    {
+      "keys": [
+        "Space",
+        "Click",
+        "Tap"
+      ],
+      "action": "Hold, then let go in the green"
+    },
+    {
+      "keys": [
+        "Enter"
+      ],
+      "action": "Play, again"
+    },
+    {
+      "keys": [
+        "Esc"
+      ],
+      "action": "Back, pause a solo run"
+    }
+  ],
+  "data": {
+    "woods": {
+      "type": "counter",
+      "max": 1000000000,
+      "add": [
+        1,
+        20
+      ],
+      "reset": "daily"
+    },
+    "daily": {
+      "type": "list",
+      "max": 100,
+      "bytes": 64
+    }
+  },
   "badges": [
-    { "id": "just-right", "name": "Just Right", "description": "Your first perfect.", "icon": "store/badge-just-right.png" },
-    { "id": "perfect-streak", "name": "Perfect Streak", "description": "Five perfects in a row.", "icon": "store/badge-perfect-streak.png" },
-    { "id": "too-hot", "name": "Too Hot", "description": "Boil the porridge over.", "icon": "store/badge-too-hot.png" },
-    { "id": "broke-the-chair", "name": "Broke the Chair", "description": "Crack the little chair.", "icon": "store/badge-broke-the-chair.png" },
-    { "id": "porridge-pro", "name": "Porridge Pro", "description": "Ten perfect porridges.", "icon": "store/badge-porridge-pro.png" },
-    { "id": "before-the-bears", "name": "Before the Bears", "description": "Score 2,500 in one run of Before the Bears.", "icon": "store/badge-before-the-bears.png" },
-    { "id": "daily-porridge", "name": "Daily Porridge", "description": "Finish a daily.", "icon": "store/badge-daily-porridge.png" },
-    { "id": "every-story", "name": "Every Story", "description": "Play all twelve pages.", "icon": "store/badge-every-story.png" },
-    { "id": "happily-ever-after", "name": "Happily Ever After", "description": "Win a story with three or more at the table.", "icon": "store/badge-happily-ever-after.png" }
+    {
+      "id": "just-right",
+      "name": "Just Right",
+      "description": "Your first perfect.",
+      "icon": "store/badge-just-right.png"
+    },
+    {
+      "id": "perfect-streak",
+      "name": "Perfect Streak",
+      "description": "Five perfects in a row.",
+      "icon": "store/badge-perfect-streak.png"
+    },
+    {
+      "id": "too-hot",
+      "name": "Too Hot",
+      "description": "Boil the porridge over.",
+      "icon": "store/badge-too-hot.png"
+    },
+    {
+      "id": "broke-the-chair",
+      "name": "Broke the Chair",
+      "description": "Crack the little chair.",
+      "icon": "store/badge-broke-the-chair.png"
+    },
+    {
+      "id": "porridge-pro",
+      "name": "Porridge Pro",
+      "description": "Ten perfect porridges.",
+      "icon": "store/badge-porridge-pro.png"
+    },
+    {
+      "id": "before-the-bears",
+      "name": "Before the Bears",
+      "description": "Score 2,500 in one run of Before the Bears.",
+      "icon": "store/badge-before-the-bears.png"
+    },
+    {
+      "id": "daily-porridge",
+      "name": "Daily Porridge",
+      "description": "Finish a daily.",
+      "icon": "store/badge-daily-porridge.png"
+    },
+    {
+      "id": "every-story",
+      "name": "Every Story",
+      "description": "Play all twelve pages.",
+      "icon": "store/badge-every-story.png"
+    },
+    {
+      "id": "happily-ever-after",
+      "name": "Happily Ever After",
+      "description": "Win a story with three or more at the table.",
+      "icon": "store/badge-happily-ever-after.png"
+    },
+    {
+      "id": "three-bowls",
+      "name": "Three Bowls",
+      "description": "Beat the three bowls at the end of a run.",
+      "icon": "store/badge-three-bowls.png"
+    },
+    {
+      "id": "all-dressed-up",
+      "name": "All Dressed Up",
+      "description": "Buy something in the Wardrobe.",
+      "icon": "store/badge-all-dressed-up.png"
+    },
+    {
+      "id": "cottage-regular",
+      "name": "Cottage Regular",
+      "description": "Reach the rank Cottage Regular.",
+      "icon": "store/badge-cottage-regular.png"
+    }
   ]
 }
