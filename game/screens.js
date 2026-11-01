@@ -4,7 +4,7 @@
 
 import { C, T, rr, circle, ellipse, withShadow, outlined, fitSize, font, FONT_DISPLAY, FONT_LABEL, drawStamp, drawFace, drawBear, drawBearHead, drawSitter, drawSign, drawTree, drawGirl } from './kit.js';
 import { drawGauge, gaugePos } from './gauge.js';
-import { drawKitchen, kitchenLayout } from './rooms.js';
+import { drawKitchen, kitchenLayout, drawBearsAtWindow } from './rooms.js';
 import { PAGES } from './pages.js';
 
 const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
@@ -29,6 +29,7 @@ function text(ctx, str, x, y, size, { weight = 900, family = FONT_DISPLAY, fill 
 // ---------------------------------------------------------------- the woodland path (the match's clock, the run's lives)
 
 function door(ctx, x, y, h, open = 0) {
+  if (!(h > 4)) return;
   const w = h * 0.62;
   withShadow(ctx, () => {
     ctx.beginPath();
@@ -141,12 +142,8 @@ export function drawScoreSign(ctx, r, big, small, mult) {
 
 // ---------------------------------------------------------------- page label, intro and prompt
 
-export function drawPageLabel(ctx, x, y, str, small) {
-  outlined(ctx, str, x, y, { size: small ? 16 : 18, weight: 700, fill: C.cream, stroke: C.ink, lw: 4 });
-}
-
 /** The page's name slammed in at the top of the stage, the twist under it. age: s since the page began. */
-export function drawIntro(ctx, L, W, { name, twist, x2, hint, age, reduced }) {
+export function drawIntro(ctx, L, W, { name, page, twist, x2, hint, age, reduced }) {
   const fade = age < 1.2 ? 1 : clamp01(1 - (age - 1.2) / 0.4);
   if (fade <= 0) return;
   const k = reduced ? 1 : easeBack(age / 0.28);
@@ -161,6 +158,10 @@ export function drawIntro(ctx, L, W, { name, twist, x2, hint, age, reduced }) {
   let ty = y + size * 0.85;
   ctx.save();
   ctx.globalAlpha = fade;
+  if (page) {
+    outlined(ctx, page.toUpperCase(), W / 2, ty - size * 0.2, { size: L.small ? 16 : 20, weight: 800, family: FONT_LABEL, fill: T.brownDark, stroke: C.cream, lw: 5 });
+    ty += L.small ? 22 : 28;
+  }
   if (twist) {
     drawStamp(ctx, twist.toUpperCase(), W / 2, ty, L.small ? 20 : 26, { rot: -0.06, color: C.blue, scale: reduced ? 1 : easeBack((age - 0.15) / 0.25) });
     ty += L.small ? 38 : 48;
@@ -298,7 +299,9 @@ export function drawReveal(ctx, W, H, top, R) {
   const hi = Math.min(1, Math.max(R.c + R.w * 3.2, ...vs.map((v) => v + 0.04)));
   const range = [lo, hi];
   const thick = small ? 34 : 46;
-  const gaugeH = portrait ? Math.min(ph * 0.5, 420) : ph - titleSize * 1.8 - thick * 1.1 - 24;
+  const rowH = small ? 28 : 36;
+  // Upright, the standings go under the gauge: every row has to fit.
+  const gaugeH = portrait ? Math.min(420, ph - titleSize * 1.8 - thick * 1.9 - R.standings.length * rowH - 24) : ph - titleSize * 1.8 - thick * 1.1 - 24;
   const g = { x: portrait ? px + 46 : W * 0.2, y: areaTop + thick * 0.5, w: thick, h: Math.max(120, gaugeH) };
   const axis = R.axis === 'down' ? 'down' : 'up';
   drawGauge(ctx, g, { axis, v: R.c, c: R.c, w: R.w, style: 'pointer', range, indicator: false, t: R.age });
@@ -336,7 +339,7 @@ export function drawReveal(ctx, W, H, top, R) {
     const isBest = i === R.marks.length - 1 && m.k !== 'asleep';
     text(ctx, word, mx + r + 14 + nw, y, small ? 18 : 22, { align: 'left', fill: m.k === 'perfect' ? C.red : m.k === 'good' ? C.green : T.brownMid });
     ctx.font = font(900, small ? 18 : 22);
-    if (isBest) best = { x: mx, y, r, end: mx + r + 14 + nw + ctx.measureText(word).width };
+    if (isBest) best = { x: mx, y, r, end: mx + r + 14 + nw + ctx.measureText(word).width, limit: portrait ? W - 24 : W * 0.62 - 12 };
     ctx.restore();
   });
   // The crown on the closest.
@@ -347,7 +350,6 @@ export function drawReveal(ctx, W, H, top, R) {
   }
   // The standings: to the right (wide) or below (upright).
   const rows = R.standings;
-  const rowH = small ? 28 : 36;
   let sx;
   let sy;
   let sw;
@@ -361,7 +363,10 @@ export function drawReveal(ctx, W, H, top, R) {
     sw = W - sx - 28;
   }
   const maxRows = Math.max(1, Math.floor((bottom - 10 - sy) / rowH));
-  const show = rows.slice(0, maxRows);
+  const show = rows.map((s, i) => ({ ...s, place: i + 1 })).slice(0, maxRows);
+  // Short of room, your own row still shows (in the last line).
+  const mine = rows.findIndex((s) => s.me);
+  if (mine >= maxRows) show[maxRows - 1] = { ...rows[mine], place: mine + 1 };
   const pointsIn = clamp01((R.age - crownAt - 0.2) / 0.4);
   show.forEach((s, i) => {
     const y = sy + i * rowH + rowH / 2;
@@ -370,7 +375,7 @@ export function drawReveal(ctx, W, H, top, R) {
       ctx.fillStyle = 'rgba(232,169,46,0.28)';
       ctx.fill();
     }
-    text(ctx, String(i + 1), sx + 10, y, small ? 17 : 20, { fill: T.brownMid });
+    text(ctx, String(s.place), sx + 10, y, small ? 17 : 20, { fill: T.brownMid });
     drawFace(ctx, s.who, sx + 40, y, rowH * 0.36, { me: s.me, shadow: false });
     ctx.font = font(800, small ? 17 : 20, FONT_LABEL);
     ctx.textAlign = 'left';
@@ -465,7 +470,8 @@ function label(ctx, str, x, y, small) {
  */
 export function drawLobby(ctx, W, H, dpr, clear, Lb) {
   const LL = lobbyLayout(W, H, clear);
-  drawKitchen(ctx, W, H, dpr, Lb.t, { x: 0, y: 0 }, LL.tableTop + LL.rowH * 0.95);
+  // Upright, the clock and the calendar take the wall where the window would be.
+  drawKitchen(ctx, W, H, dpr, Lb.t, { x: 0, y: 0 }, LL.tableTop + LL.rowH * 0.95, LL.portrait);
   const s = LL.small;
   const O = LL.objects;
   const dimSolo = Lb.soloOk ? 1 : 0.45;
@@ -720,19 +726,26 @@ export function drawCrown(ctx, x, y, cw, rot = 0, k = 1) {
 export function drawPodium(ctx, W, H, dpr, top, P) {
   const portrait = H > W * 1.1;
   const floorY = Math.round(H * (portrait ? 0.66 : 0.76));
-  drawKitchen(ctx, W, H, dpr, P.age, { x: 0, y: 0 }, floorY);
+  const K = drawKitchen(ctx, W, H, dpr, P.age, { x: 0, y: 0 }, floorY);
   const small = Math.min(W, H) < 500;
   const unit = Math.min(W / (portrait ? 420 : 760), (floorY - top) / 260);
-  // The door bursts open on the back wall; the bears walk in and stand there (behind the chairs).
-  const doorX = portrait ? W * 0.82 : W * 0.87;
-  const dh = Math.min(240 * unit, (floorY - top) * 0.8);
-  door(ctx, doorX, floorY - 2, dh, 1);
-  const walkIn = easeOut(P.age / 2.2);
+  // The bears are home: through the door behind the chairs (wide), or at the window (upright, where there's no room for a door).
+  const doorX = W * 0.87;
   const bearAt = (i) => doorX + (i - 1) * 34 * unit;
-  ['papa', 'mama', 'baby'].forEach((kind, i) => {
-    const x = lerp(doorX + 20 * unit, bearAt(i), walkIn);
-    drawBear(ctx, kind, x, floorY - 4, 0.44 * unit, { walk: walkIn < 1 ? P.age * 8 + i : undefined, expr: kind === 'baby' ? 'shock' : kind === 'papa' ? 'grump' : 'sweet', flip: true });
-  });
+  let speaker = null;
+  if (portrait) {
+    drawBearsAtWindow(ctx, K, ['grump', 'shock', 'shock']);
+    if (K.win) speaker = { x: K.win.x + K.win.r * 0.62, y: K.win.y - K.win.r * 0.2 };
+  } else {
+    const dh = Math.min(240 * unit, (floorY - top) * 0.8);
+    door(ctx, doorX, floorY - 2, dh, 1);
+    const walkIn = easeOut(P.age / 2.2);
+    ['papa', 'mama', 'baby'].forEach((kind, i) => {
+      const x = lerp(doorX + 20 * unit, bearAt(i), walkIn);
+      drawBear(ctx, kind, x, floorY - 4, 0.44 * unit, { walk: walkIn < 1 ? P.age * 8 + i : undefined, expr: kind === 'baby' ? 'shock' : kind === 'papa' ? 'grump' : 'sweet', flip: true });
+    });
+    speaker = { x: bearAt(2), y: floorY - 150 * unit };
+  }
   const xs = portrait ? [W * 0.5, W * 0.2, W * 0.8] : [W * 0.47, W * 0.27, W * 0.67];
   const spots = [
     { place: 1, x: xs[0], size: 0.85 * unit, color: C.red },
@@ -763,19 +776,26 @@ export function drawPodium(ctx, W, H, dpr, top, P) {
     outlined(ctx, commas(r.points), spot.x, cy + size + 6, { size: small ? 18 : 24, fill: C.mustard, stroke: T.brownDark, lw: 4 });
   }
   // Baby Bear's line, over everything.
-  if (P.age > 2.2) {
+  if (P.age > 2.2 && speaker) {
     const msg = "Someone's in my chair!";
     const size = small ? 16 : 20;
     ctx.font = font(900, size);
     const tw = ctx.measureText(msg).width;
-    const bx = Math.min(W - tw / 2 - 20, Math.max(tw / 2 + 20, bearAt(2)));
-    const by = floorY - 150 * unit;
+    // Upright, the bubble sits to the right of the window and points back at it.
+    const bx = portrait ? Math.min(W - tw / 2 - 16, speaker.x + tw / 2 + 24) : Math.min(W - tw / 2 - 20, Math.max(tw / 2 + 20, speaker.x));
+    const by = portrait ? speaker.y - size * 1.6 : speaker.y;
     withShadow(ctx, () => rr(ctx, bx - tw / 2 - 14, by - size * 1.1, tw + 28, size * 2.2, 14), T.paper, 2, 3);
     ctx.fillStyle = T.paper;
     ctx.beginPath();
-    ctx.moveTo(bearAt(2) - 6, by + size * 1.05);
-    ctx.lineTo(bearAt(2) + 8, by + size * 1.05);
-    ctx.lineTo(bearAt(2) + 4, by + size * 1.9);
+    if (portrait) {
+      ctx.moveTo(bx - tw / 2 - 2, by + size * 0.4);
+      ctx.lineTo(bx - tw / 2 + 18, by + size * 1.05);
+      ctx.lineTo(speaker.x, speaker.y);
+    } else {
+      ctx.moveTo(speaker.x - 6, by + size * 1.05);
+      ctx.lineTo(speaker.x + 8, by + size * 1.05);
+      ctx.lineTo(speaker.x + 4, by + size * 1.9);
+    }
     ctx.fill();
     text(ctx, msg, bx, by + 1, size);
   }
@@ -916,7 +936,7 @@ export function drawTitle(ctx, W, H, { best, age, reduced, dpr }) {
   const small = Math.min(W, H) < 500;
   const size = Math.min(W * (H > W * 1.1 ? 0.13 : 0.085), small ? 60 : 96);
   const y = Math.max(H * 0.16, size * 0.9 + 70 * (W < 700 ? 1 : 0));
-  const k = reduced ? 1 : age < 0.4 ? 0 : clamp01((age - 0.4) / 0.12);
+  const k = reduced ? 1 : age < 0.15 ? 0 : clamp01((age - 0.15) / 0.12);
   const scale = reduced ? 1 : k < 1 ? 2.2 - 1.2 * k * k : 1;
   if (k > 0) drawStamp(ctx, 'JUST RIGHT', W / 2, y, size, { rot: -0.06, color: C.red, scale, alpha: reduced ? clamp01(age / 0.3) : 0.4 + 0.6 * k, dpr });
   if (best > 0) outlined(ctx, `Best ${commas(best)}`, W / 2, y + size * 1.05, { size: small ? 18 : 24, weight: 900, fill: C.ink, stroke: C.cream });

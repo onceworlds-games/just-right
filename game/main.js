@@ -2,7 +2,7 @@
 // between the room (net.js), the local activities (Before the Bears, the daily, practice, the title's attract mode) and the
 // drawing.
 
-import { C, T, SEAT_COLORS, loadFonts, outlined, drawStamp } from './kit.js';
+import { C, T, SEAT_COLORS, loadFonts, outlined, stampSize } from './kit.js';
 import { createFx } from './fx.js';
 import { startAudio, setSuspended, sfx, holdSound, musicCtl } from './audio.js';
 import { createUi } from './ui.js';
@@ -13,7 +13,6 @@ import {
   drawPath,
   drawHeads,
   drawScoreSign,
-  drawPageLabel,
   drawIntro,
   drawPrompt,
   drawReveal,
@@ -39,15 +38,6 @@ import { createOnline, JOIN_OPTIONS, INTRO_MS, pagesSetting } from './net.js';
 import { createRng, hash } from './rng.js';
 
 const params = new URLSearchParams(location.search);
-const posterName = params.get('poster');
-if (posterName) {
-  import('./poster.js')
-    .then((m) => m.runPoster(posterName, params))
-    .catch((e) => {
-      document.body.dataset.error = String((e && e.stack) || e);
-      document.body.dataset.ready = 'error';
-    });
-} else boot().catch((e) => console.error('[just-right] boot failed', e));
 
 async function importHelpers() {
   try {
@@ -838,6 +828,12 @@ async function boot() {
         } catch {}
       }
     }
+    // Seated in a story that is playing (the host started it, or this page reloaded mid-story): straight in.
+    if (screen === 'title' && room && online && !closed) {
+      try {
+        if (room.isParticipant()) setScreen('lobby');
+      } catch {}
+    }
     const v = view();
     // The platform's Ready strip only where Ready makes sense.
     if (room && online) {
@@ -1076,7 +1072,17 @@ async function boot() {
     const age = (now - pc.beganAt) / 1000;
     const met = pc.metBefore;
     const hint = pc.P.page.hint && met < 2 ? pc.P.page.hint : '';
-    if (kind !== 'attract') drawIntro(ctx, L, W, { name: pc.P.page.name, twist: TWIST_CARD[pc.P.tw] || '', x2: pc.P.x2 && kind === 'match', hint, age, reduced: fx.reduced });
+    const page =
+      kind === 'match'
+        ? `Page ${online.match.round} of ${online.match.rounds}`
+        : kind === 'run'
+          ? `Page ${local.index + 1}`
+          : kind === 'daily'
+            ? `Daily ${local.index + 1} of ${DAILY_PAGES}`
+            : kind === 'practice'
+              ? 'Practice'
+              : '';
+    if (kind !== 'attract') drawIntro(ctx, L, W, { name: pc.P.page.name, page, twist: TWIST_CARD[pc.P.tw] || '', x2: pc.P.x2 && kind === 'match', hint, age, reduced: fx.reduced });
     // Hold, or Let go once, or the watch.
     let label = '';
     const watching = kind === 'match' && (!online.match.me || room.spectating);
@@ -1087,12 +1093,6 @@ async function boot() {
     const watch = !watching && kind !== 'attract' && stage.pressAt === null && left !== null && left <= 3 && now >= stage.start ? left : null;
     if (watching) outlined(ctx, 'Watching', L.prompt.x, L.prompt.y, { size: L.small ? 24 : 30, fill: C.ink, stroke: C.cream });
     else drawPrompt(ctx, L, { label, key: label && label !== 'Let go!' && !lastInputTouch ? 'Space' : null, touch: label && label !== 'Let go!' && lastInputTouch, t: clock, watch, reduced: fx.reduced });
-    if (kind === 'match') {
-      const m = online.match;
-      drawPageLabel(ctx, W / 2, L.page.y, `Page ${m.round} of ${m.rounds}`, L.small);
-    } else if (kind === 'run') drawPageLabel(ctx, W / 2, L.page.y, `Page ${local.index + 1}`, L.small);
-    else if (kind === 'daily') drawPageLabel(ctx, W / 2, L.page.y, `Daily · ${local.index + 1} of ${DAILY_PAGES}`, L.small);
-    else if (kind === 'practice') drawPageLabel(ctx, W / 2, L.page.y, 'Practice', L.small);
     return L;
   }
 
@@ -1149,7 +1149,9 @@ async function boot() {
           reveal.stamped = true;
           const top = marks[marks.length - 1];
           const sz = Math.min(W, H) < 500 ? 20 : 28;
-          if (top && top.k === 'perfect') fx.stamp('JUST RIGHT!', Math.min(W - sz * 3.2, best.end + sz * 3.4), best.y, sz, { life: 2.2, rot: -0.12 });
+          // Beside the closest mark, where there's room for it (the crown and the red points say it otherwise).
+          const half = stampSize('JUST RIGHT!', sz).w / 2;
+          if (top && top.k === 'perfect' && best.end + half * 2 + 16 < best.limit) fx.stamp('JUST RIGHT!', best.end + half + 16, best.y, sz, { life: 2.2, rot: -0.12 });
         }
       }
       fx.drawStamps(ctx, dpr);
@@ -1340,11 +1342,13 @@ async function boot() {
 
   function frame(now) {
     requestAnimationFrame(frame);
-    const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+    const raw = Math.max(0, (now - last) / 1000);
+    const dt = Math.min(0.05, raw);
     last = now;
     fx.update(dt);
     if (!fx.stopped && !paused) clock += dt;
-    if (view() === 'title') titleAge += dt;
+    // The title's slam keeps to the wall clock, so a slow first second never hides the name.
+    if (view() === 'title') titleAge += Math.min(0.5, raw);
     try {
       update(performance.now());
       draw(performance.now());
@@ -1362,3 +1366,14 @@ async function boot() {
   helpers = r ? await helpersP : null;
   attach(r);
 }
+
+// Start, once every declaration above is in place.
+const posterName = params.get('poster');
+if (posterName) {
+  import('./poster.js')
+    .then((m) => m.runPoster(posterName, params))
+    .catch((e) => {
+      document.body.dataset.error = String((e && e.stack) || e);
+      document.body.dataset.ready = 'error';
+    });
+} else boot().catch((e) => console.error('[just-right] boot failed', e));

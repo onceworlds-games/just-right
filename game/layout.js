@@ -68,17 +68,22 @@ export function stageLayout(W, H, top, axis, { bottomClear = 0 } = {}) {
     const gaugeBlock = T + capR * 2.2 + 12;
     const cw = Math.min(W - 32 - capR * 4.6, stageH * 2.3);
     const x = (W - cw) / 2;
-    box = { x, y: top, w: cw, h: stageH - gaugeBlock };
-    g = { x: x + capR * 0.4, y: top + stageH - gaugeBlock + capR * 0.9 + 4, w: cw - capR * 0.8, h: T };
+    // On a tall screen the scene doesn't stretch up: it sits a little below the middle of the space.
+    const h = Math.min(stageH - gaugeBlock, Math.max(cw * 0.95, (stageH - gaugeBlock) * 0.5));
+    const y = top + (stageH - gaugeBlock - h) * 0.6;
+    box = { x, y, w: cw, h };
+    g = { x: x + capR * 0.4, y: y + h + capR * 0.9 + 4, w: cw - capR * 0.8, h: T };
   } else {
-    const gaugeW = T * 3.4;
+    const gaugeW = T * (portrait ? 2.7 : 3.4);
     const cw = Math.min(W - 24, Math.max(stageH * 1.25, Math.min(stageH * 1.9, W - 24)));
     const x = (W - cw) / 2;
-    box = { x, y: top, w: cw - gaugeW, h: stageH };
-    const gy = top + capR * 2.3 + 2;
-    g = { x: x + cw - gaugeW + T * 1.3, y: gy, w: T, h: stageH - capR * 4.6 - 4 };
+    const h = portrait ? Math.min(stageH, Math.max((cw - gaugeW) * 1.3, stageH * 0.5)) : stageH;
+    const y = top + (stageH - h) * 0.6;
+    box = { x, y, w: cw - gaugeW, h };
+    const gy = y + capR * 2.3 + 2;
+    g = { x: x + cw - gaugeW + T * (portrait ? 0.9 : 1.3), y: gy, w: T, h: h - capR * 4.6 - 4 };
   }
   const u = Math.max(8, Math.min(box.w / 8.5, box.h / 6.6));
   const floor = axis === 'right' ? box.y + box.h - u * 0.2 : box.y + box.h - u * 0.15;
-  return { portrait, small, box, g, T, u, floor, prompt, top, bottom, page: { x: W / 2, y: H - 14 } };
+  return { portrait, small, box, g, T, u, floor, prompt, top, bottom };
 }

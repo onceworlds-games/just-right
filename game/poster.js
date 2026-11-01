@@ -1,14 +1,14 @@
 // Store art: one staged, deterministic frame drawn with the game's own renderer (?poster=cover|action|win|multi|icon|badge-<id>).
 // No room, no SDK, no HUD from the platform; document.body.dataset.ready = '1' once it's on screen.
 
-import { C, T, loadFonts, circle, ellipse, rr, withShadow, drawStamp, drawFace, drawBearHead, drawGirlHead, outlined, FONT_DISPLAY } from './kit.js';
+import { C, T, loadFonts, circle, ellipse, rr, withShadow, drawStamp, stampSize, drawFace, drawBearHead, drawGirlHead, outlined, FONT_DISPLAY } from './kit.js';
 import { createFx } from './fx.js';
-import { stageLayout, hudLayout } from './layout.js';
+import { stageLayout, hudLayout, clearAreas } from './layout.js';
 import { drawPage } from './view.js';
 import { SCENES } from './scenes.js';
 import { drawGauge, gaugePos } from './gauge.js';
-import { drawPath, drawHeads, drawScoreSign, drawReveal, drawPodium, spread } from './screens.js';
-import { kitchenLayout } from './rooms.js';
+import { drawPath, drawHeads, drawScoreSign, drawReveal, drawPodium, drawLobby, spread } from './screens.js';
+import { kitchenLayout, drawBearsAtWindow } from './rooms.js';
 import { readPage } from './pages.js';
 import { FOLK } from './brain.js';
 
@@ -19,28 +19,8 @@ function settle(fx, seconds) {
   for (let t = 0; t < seconds; t += 1 / 60) fx.update(1 / 60);
 }
 
-function bearsInWindow(ctx, W, H, floor, exprs = ['grump', 'shock', 'sleepy']) {
-  const K = kitchenLayout(W, H, floor);
-  const { x, y, r } = K.win;
-  ctx.save();
-  circle(ctx, x, y, r);
-  ctx.clip();
-  ['papa', 'mama', 'baby'].forEach((kind, i) => {
-    const hr = r * (kind === 'papa' ? 0.42 : kind === 'mama' ? 0.36 : 0.3);
-    drawBearHead(ctx, kind, x + (i - 1) * r * 0.62, y + r * 0.62 - hr * 0.2 + (kind === 'baby' ? r * 0.12 : 0), hr, exprs[i]);
-  });
-  ctx.restore();
-  // The mullions again, over the bears.
-  ctx.save();
-  ctx.lineWidth = Math.max(4, r * 0.08);
-  ctx.strokeStyle = T.brownMid;
-  ctx.beginPath();
-  ctx.moveTo(x - r, y);
-  ctx.lineTo(x + r, y);
-  ctx.moveTo(x, y - r);
-  ctx.lineTo(x, y + r);
-  ctx.stroke();
-  ctx.restore();
+function bearsInWindow(ctx, W, H, floor, exprs) {
+  drawBearsAtWindow(ctx, kitchenLayout(W, H, floor), exprs);
 }
 
 function cover(ctx, W, H, fx) {
@@ -124,7 +104,15 @@ function multi(ctx, W, H) {
   drawHeads(ctx, hud.heads, seats.map((s, i) => ({ id: s.id, who: s.who, x: hud.heads.x + hud.headR + 4 + i * (hud.headR * 2 + 8), done: true })), hud.headR, 0, true);
   drawScoreSign(ctx, hud.sign, '612', '1st');
   const best = drawReveal(ctx, W, H, hud.bottom, { name: 'Toast', axis: 'up', c: 0.56, w: 0.06, marks, standings, age: 4 });
-  if (best) drawStamp(ctx, 'JUST RIGHT!', best.end + 100, best.y - 4, 28, { rot: -0.12, dpr: 1 });
+  const half = best ? stampSize('JUST RIGHT!', 28).w / 2 : 0;
+  if (best && best.end + half * 2 + 16 < best.limit) drawStamp(ctx, 'JUST RIGHT!', best.end + half + 16, best.y - 4, 28, { rot: -0.12, dpr: 1 });
+}
+
+/** The lobby with a full table (to check the layout at any size; not store art). */
+function lobby(ctx, W, H) {
+  const seats = FOLK.slice(0, 6).map((f, i) => ({ who: folk(i), name: f.name, ready: i % 2 === 0, host: i === 0, me: i === 1, color: C.blue }));
+  seats.push({ empty: true, invite: true }, { empty: true, invite: true });
+  drawLobby(ctx, W, H, 1, { ...clearAreas(W, H, null), bottom: 88 }, { seats, pages: 12, best: 1840, daily: { day: 1, month: 'Nov', best: 412 }, soloOk: true, t: 0, winner: folk(2) });
 }
 
 function icon(ctx, W, H) {
@@ -324,9 +312,12 @@ function badge(ctx, W, id) {
   B.draw(ctx, c, r);
 }
 
-export async function runPoster(name) {
-  const W = Math.max(1, window.innerWidth);
-  const H = Math.max(1, window.innerHeight);
+export async function runPoster(full) {
+  // "multi.390x844": the same scene drawn at a phone's size in the corner, to check a layout.
+  const at = /^(.*)[.](\d{2,4})x(\d{2,4})$/.exec(full);
+  const name = at ? at[1] : full;
+  const W = at ? Number(at[2]) : Math.max(1, window.innerWidth);
+  const H = at ? Number(at[3]) : Math.max(1, window.innerHeight);
   const cv = document.getElementById('cv');
   cv.width = W;
   cv.height = H;
@@ -350,6 +341,7 @@ export async function runPoster(name) {
   else if (name === 'win') win(ctx, W, H, fx);
   else if (name === 'multi') multi(ctx, W, H);
   else if (name === 'icon') icon(ctx, W, H);
+  else if (name === 'lobby') lobby(ctx, W, H);
   else if (name.startsWith('badge-')) badge(ctx, W, name.slice(6));
   else cover(ctx, W, H, fx);
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));

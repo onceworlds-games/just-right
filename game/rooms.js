@@ -2,7 +2,7 @@
 // outside (the far hills, the cottage on its hill, the trees). Static layers are drawn once per size on offscreen canvases; the
 // woods through the window sway live, and everything shifts a little with the camera (parallax).
 
-import { C, T, rr, circle, ellipse, drawTree } from './kit.js';
+import { C, T, rr, circle, ellipse, drawTree, drawBearHead } from './kit.js';
 
 const cache = new Map();
 
@@ -23,10 +23,10 @@ function layer(key, W, H, dpr, paint) {
 }
 
 /** Where things stand in the kitchen for this screen. */
-export function kitchenLayout(W, H, floor) {
+export function kitchenLayout(W, H, floor, noWindow = false) {
   const portrait = H > W * 1.1;
   const floorY = Math.round(floor ?? H * (portrait ? 0.86 : 0.82));
-  const win = portrait ? { x: W * 0.2, y: H * 0.28, r: Math.min(W, H) * 0.13 } : { x: W * 0.13, y: H * 0.36, r: Math.min(W, H) * 0.14 };
+  const win = noWindow ? null : portrait ? { x: W * 0.2, y: H * 0.28, r: Math.min(W, H) * 0.13 } : { x: W * 0.13, y: H * 0.36, r: Math.min(W, H) * 0.14 };
   return { portrait, floorY, win, wainTop: floorY - Math.round(H * 0.13) };
 }
 
@@ -77,9 +77,11 @@ function paintKitchen(g, W, H, K) {
   g.fillStyle = T.beam;
   g.fillRect(0, 0, W, Math.max(10, H * 0.025));
   // The window's frame (its woods are drawn live).
-  const { x, y, r } = K.win;
-  circle(g, x + 6, y + 8, r + r * 0.16, T.shadow);
-  circle(g, x, y, r + r * 0.16, T.brownMid);
+  if (K.win) {
+    const { x, y, r } = K.win;
+    circle(g, x + 6, y + 8, r + r * 0.16, T.shadow);
+    circle(g, x, y, r + r * 0.16, T.brownMid);
+  }
   // A shelf with the three bowls, on the far wall.
   if (!K.portrait) {
     const sx = W * 0.8;
@@ -144,23 +146,36 @@ function drawWindowView(ctx, K, t, cam) {
   ctx.restore();
 }
 
-/** Bears passing the window (the title's and the cover's moment): a phase 0..1 across, or null. */
-export function drawWindowBears(ctx, K, phase, drawBear, kinds = ['papa', 'mama', 'baby']) {
+/** The three bears' heads at the window, looking in (exprs: papa, mama, baby). */
+export function drawBearsAtWindow(ctx, K, exprs = ['grump', 'shock', 'sleepy']) {
+  if (!K.win) return;
   const { x, y, r } = K.win;
   ctx.save();
   circle(ctx, x, y, r);
   ctx.clip();
-  kinds.forEach((kind, i) => {
-    const bx = x - r * 1.6 + (phase * 3.2 - i * 0.55) * r;
-    drawBear(ctx, kind, bx, y + r * 1.15, r * 0.0062, { walk: phase * 30 + i, expr: kind === 'papa' ? 'grump' : undefined });
+  ['papa', 'mama', 'baby'].forEach((kind, i) => {
+    const hr = r * (kind === 'papa' ? 0.42 : kind === 'mama' ? 0.36 : 0.3);
+    drawBearHead(ctx, kind, x + (i - 1) * r * 0.62, y + r * 0.62 - hr * 0.2 + (kind === 'baby' ? r * 0.12 : 0), hr, exprs[i]);
   });
+  ctx.restore();
+  // The mullions again, over the bears.
+  ctx.save();
+  ctx.lineWidth = Math.max(4, r * 0.08);
+  ctx.strokeStyle = T.brownMid;
+  ctx.beginPath();
+  ctx.moveTo(x - r, y);
+  ctx.lineTo(x + r, y);
+  ctx.moveTo(x, y - r);
+  ctx.lineTo(x, y + r);
+  ctx.stroke();
   ctx.restore();
 }
 
-export function drawKitchen(ctx, W, H, dpr, t, cam = { x: 0, y: 0 }, floor) {
-  const K = kitchenLayout(W, H, floor);
-  const img = layer(`kitchen:${K.floorY}`, W, H, dpr, (g) => paintKitchen(g, W, H, K));
+export function drawKitchen(ctx, W, H, dpr, t, cam = { x: 0, y: 0 }, floor, noWindow = false) {
+  const K = kitchenLayout(W, H, floor, noWindow);
+  const img = layer(`kitchen:${K.floorY}:${noWindow ? 0 : 1}`, W, H, dpr, (g) => paintKitchen(g, W, H, K));
   ctx.drawImage(img, -cam.x * 0.3, -cam.y * 0.3, W, H);
+  if (!K.win) return K;
   drawWindowView(ctx, { ...K, win: { ...K.win, x: K.win.x - cam.x * 0.3, y: K.win.y - cam.y * 0.3 } }, t, cam);
   // Warm light from the window across the room.
   ctx.save();

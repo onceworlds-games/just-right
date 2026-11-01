@@ -1,7 +1,7 @@
 # Status
 
-Done: DESIGN.md (approved, with notes: every page readable in a second, Foggy keeps a ghost needle and the pitch, a ~3 s
-skippable reveal with no overlapping markers, own lobby + ownCountdown, event.timeStamp holds and no long-press on touch).
-Pages cut to 12 (door and scale out).
+Done: DESIGN.md (approved); pure modules + tests; audio, art kit, gauge, rooms; twelve scenes, fx, layout, view; screens,
+ui, main (title, lobby, countdown, pages, reveal, podium, runs, daily, practice); store art (4 pictures, icon, 9 badges).
 
-Next: pure modules + tests, audio, art kit and scenes, screens, net, main, posters, trailer.
+Next: headless shots (title, lobby, play at 1280x720, 390x844, 844x390) and fixes; check; trailer; README; DESIGN.md to
+match the build; re-read every file; delete this file.
