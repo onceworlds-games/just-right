@@ -338,7 +338,9 @@
 .standings .s .pl { color: var(--honey); }
 .standings .s .gn { color: #9fe08a; }
 .revtitle { position: absolute; left: 50%; top: calc(var(--rt) + 16px); transform: translateX(-50%); font: 900 clamp(28px, 5vmin, 44px) / 1 'Fraunces', serif; color: var(--paper); -webkit-text-stroke: 7px var(--ink); paint-order: stroke fill; white-space: nowrap; }
-.tapon { position: absolute; left: 50%; bottom: calc(var(--rb) + 70px); transform: translateX(-50%); font: 800 18px/1 'Barlow Condensed'; letter-spacing: 0.14em; text-transform: uppercase; color: var(--paper); -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill; opacity: 0.85; }
+.revfoot { position: absolute; left: 50%; bottom: calc(var(--rb) + 14px); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(96vw, 900px); pointer-events: none; }
+.revfoot .standings { position: static; transform: none; width: 100%; }
+.tapon { font: 800 18px/1 'Barlow Condensed'; letter-spacing: 0.14em; text-transform: uppercase; color: var(--paper); -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill; opacity: 0.85; }
 .podium .winner { position: absolute; left: 50%; top: calc(var(--rt) + 14vh); transform: translate(-50%, -50%); text-align: center; }
 .podium .winner .stamp { position: relative; left: auto; top: auto; display: inline-block; transform: rotate(-5deg); --s: clamp(40px, 8vmin, 84px); }
 .podium .winner .who { margin-top: 10px; font: 900 clamp(26px, 4.4vmin, 40px) / 1 'Fraunces', serif; color: var(--paper); -webkit-text-stroke: 7px var(--ink); paint-order: stroke fill; }

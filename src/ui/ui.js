@@ -480,7 +480,7 @@ ${pages}`;
     const rows = d.rows
       .map((r, i) => `<div class="s${r.me ? ' me' : ''}" style="animation-delay:${0.05 * i}s">${headHtml(r)}<span class="pl">${ordinal(r.place)}</span><span>${esc(r.name)}</span><b>${commas(r.points)}</b>${r.gain > 0 ? `<span class="gn">+${r.gain}</span>` : ''}</div>`)
       .join('');
-    put('reveal', JSON.stringify(d), `<div class="revtitle">${esc(d.title)}</div><div class="standings">${rows}</div>${d.tap ? `<div class="tapon">${d.touch ? 'Tap' : 'Space'} to go on</div>` : ''}`);
+    put('reveal', JSON.stringify(d), `<div class="revtitle">${esc(d.title)}</div><div class="revfoot"><div class="standings">${rows}</div>${d.tap ? `<div class="tapon">${d.touch ? 'Tap' : 'Space'} to go on</div>` : ''}</div>`);
   }
 
   function podium(d) {

@@ -103,7 +103,8 @@ export function createCamRig(camera) {
         const dist = from.pos.distanceTo(to.pos);
         const arc = Math.sin(Math.PI * k);
         pos.y += arc * Math.min(1.2, dist * 0.12);
-        pos.addScaledVector(away, arc * swing);
+        // Swing out of the house early and back in late, so a move between rooms never grazes a partition.
+        pos.addScaledVector(away, Math.sqrt(arc) * swing);
         fov = from.fov + (to.fov - from.fov) * k;
       }
       pushNow += (push - pushNow) * Math.min(1, dt * 2.2);

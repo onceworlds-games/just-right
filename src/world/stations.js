@@ -199,8 +199,9 @@ export function createStations(ctx) {
     const CS = 1;
     const CX = 1.95;
     const CZ = -0.95;
-    // Turned a little toward the fire, seen three-quarters so the sit reads.
-    const RY = 0.35;
+    // Turned away from the fire and seen three-quarters from the front: she stands beside it (not in front of it), the sit
+    // reads, and when it snaps she goes over backwards onto the open rug.
+    const RY = -0.75;
     const FX = Math.sin(RY);
     const FZ = Math.cos(RY);
     const sitAt = (k) => [CX + FX * (0.46 - k * 0.22), CZ + FZ * (0.46 - k * 0.22)];
@@ -214,20 +215,19 @@ export function createStations(ctx) {
     stations.chair = {
       id: 'chair',
       group: g,
-      frame: { target: [CX + 0.12, 0.5, CZ + 0.2], from: [-0.35, 0.3, 1], radius: 0.95 },
-      meter: { at: [CX + 0.82, 0, CZ - 0.15], s: 0.52, axis: 'down' },
-      /** Whole again (the podium sits the winner in it). */
-      rest() {
+      frame: { target: [CX - 0.12, 0.48, CZ + 0.2], from: [0.25, 0.3, 1], radius: 1.15 },
+      meter: { at: [CX - 0.9, 0, CZ + 0.12], s: 0.52, axis: 'down' },
+      /** Whole again, turned to ry (the podium turns it to face the room and sits the winner in it). */
+      rest(ry = RY) {
         broken = null;
         for (const p of chair.parts) {
           p.position.copy(p.userData.home);
           p.rotation.copy(p.userData.homeRot);
         }
         chair.group.scale.setScalar(CS);
-        chair.group.rotation.set(0, RY, 0);
+        chair.group.rotation.set(0, ry, 0);
+        return { x: CX + Math.sin(ry) * 0.24, z: CZ + Math.cos(ry) * 0.24, ry };
       },
-      /** Where (and which way) she sits in it. */
-      seat: { x: CX + FX * 0.24, z: CZ + FZ * 0.24, ry: RY },
       enter() {
         this.rest();
         const [x, z] = sitAt(0);

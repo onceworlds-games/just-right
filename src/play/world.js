@@ -113,6 +113,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     mode = 'page';
     pageP = P;
     hideSeats();
+    reveal.leave();
     for (const b of Object.values(bears)) b.group.visible = false;
     setActive(id);
     me.group.visible = true;
@@ -257,8 +258,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     me.group.visible = false;
     // The winner in the little chair, front and centre; the rest stand behind and beside it, like a photograph.
     const chairSt = stations.chair;
-    chairSt?.rest?.();
-    const seat = chairSt?.seat ?? { x: 2.03, z: -0.72, ry: 0.35 };
+    const seat = chairSt?.rest?.(0.35) ?? { x: 2.03, z: -0.72, ry: 0.35 };
     const spots = [
       { x: seat.x, z: seat.z, ry: seat.ry },
       { x: 1.4, z: -1.15, ry: 0.25 },
@@ -306,19 +306,33 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     sound('growl', { kind: ['papa', 'mama', 'baby'][i] });
     ctx.shake(0.4, 1, 0.6);
   }
+  let spotsKey = '';
+  let spotsNow = [];
   function placeHomeBears() {
     if (mode !== 'page' || !active) {
       return;
     }
     const list = [bears.papa, bears.mama, bears.baby];
-    const spots = bearSpots(activeId, active.frame);
+    const key = `${activeId}|${bearScare ? bearScare.i : -1}|${fitAspect ?? camera.aspect}`;
+    if (key !== spotsKey) {
+      spotsKey = key;
+      spotsNow = bearSpots(activeId, active.frame, bearScare ? bearScare.i : -1);
+    }
+    const spots = spotsNow;
     for (let i = 0; i < 3; i++) {
       const b = list[i];
       if (i >= bearsHome && !(bearScare && bearScare.i === i)) {
         b.group.visible = false;
         continue;
       }
-      if (!b.group.visible || b.homeFor !== activeId) {
+      // One that came in on this page stays where it landed.
+      if (b.group.visible && b.homeFor === activeId) continue;
+      if (!spots[i]) {
+        b.group.visible = false;
+        b.homeFor = null;
+        continue;
+      }
+      {
         const [x, y, z, ry] = spots[i];
         b.place(x, y, z, ry);
         b.homeFor = activeId;
@@ -332,31 +346,56 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     bell: [[23.05, -0.3, 1.0, -0.8], [23.55, -0.3, 0.2, -0.9], [22.75, -0.3, 1.85, -0.6]],
     swing: [[10.9, -0.3, 0.2, 0.9], [10.35, -0.3, 0.95, 0.8], [11.15, -0.3, 1.6, 0.6]],
   };
-  function bearSpots(id, f) {
+  /**
+   * Indoors: searched against the page's own framing, so the bears loom at the edges of the picture, never between the
+   * camera and the page: Papa at one edge, Mama at the other, Baby a little deeper in. A bear with no such place on this
+   * page stays out of the picture (null), except the one arriving, which takes the nearest place there is.
+   */
+  const BEAR_WANT = [
+    { sx: -0.95, deeper: 0.15 },
+    { sx: 0.95, deeper: 0.15 },
+    { sx: 0.7, deeper: 0.5 },
+  ];
+  const _bf = new THREE.Vector3();
+  const _br = new THREE.Vector3();
+  const _bv = new THREE.Vector3();
+  function bearSpots(id, f, arriving = -1) {
     if (OUTDOOR_BEARS[id]) return OUTDOOR_BEARS[id];
-    // Indoors: either side of the page, toward the back, turned to watch it.
-    const [fx, , fz] = f.from;
-    const len = Math.hypot(fx, fz) || 1;
-    const rx = fz / len;
-    const rz = -fx / len;
-    const bx = -fx / len;
-    const bz = -fz / len;
+    const aspect = fitAspect ?? camera.aspect ?? 16 / 9;
+    const fr = framing(f, aspect);
+    _bf.subVectors(fr.look, fr.pos);
+    _bf.y = 0;
+    _bf.normalize();
+    _br.set(-_bf.z, 0, _bf.x);
+    const tanH = Math.tan(THREE.MathUtils.degToRad(fr.fov ?? 32) / 2) * aspect;
     const [tx, , tz] = f.target;
+    const tDepth = (tx - fr.pos.x) * _bf.x + (tz - fr.pos.z) * _bf.z;
+    const room = Object.values(ROOM).find(([a, b2]) => tx >= a && tx <= b2) ?? [-9.4, 9.0];
     const out = [];
-    const plan = [
-      [-1, 1.1, 0.35],
-      [1, 1.05, 0.3],
-      [1, 1.45, -0.15],
-    ];
-    for (const [side, spread, back] of plan) {
-      let x = tx + rx * side * f.radius * spread + bx * back;
-      let z = tz + rz * side * f.radius * spread + bz * back;
-      // Stay in the page's room (never inside a partition or through it).
-      const room = Object.values(ROOM).find(([a, b2]) => tx >= a && tx <= b2) ?? [-9.4, 9.0];
-      x = Math.max(room[0] + 0.4, Math.min(room[1] - 0.4, x));
-      z = Math.max(BACK + 0.35, Math.min(FRONT - 0.5, z));
-      out.push([x, 0, z, Math.atan2(tx - x, tz + 1.5 - z) * 0.8]);
-    }
+    BEAR_WANT.forEach((want, i) => {
+      let best = null;
+      let bestScore = Infinity;
+      const strict = i !== arriving;
+      for (let x = room[0] + 0.45; x <= room[1] - 0.45; x += 0.12) {
+        for (let z = BACK + 0.4; z <= FRONT - 0.4; z += 0.12) {
+          _bv.set(x - fr.pos.x, 0, z - fr.pos.z);
+          const depth = _bv.dot(_bf);
+          if (depth < 1) continue;
+          const sx = _bv.dot(_br) / (depth * tanH);
+          const near = Math.hypot(x - tx, z - tz);
+          if (strict && (depth < tDepth + want.deeper || Math.abs(sx) < 0.6 || Math.abs(sx) > 1.2 || near < 0.8)) continue;
+          let score = Math.abs(sx - want.sx) * 3 + Math.max(0, tDepth + want.deeper - depth) * 4 + Math.max(0, 0.9 - near) * 6;
+          for (const o of out) if (o) score += Math.max(0, 0.75 - Math.hypot(x - o[0], z - o[2])) * 8;
+          if (score < bestScore) {
+            bestScore = score;
+            best = [x, z];
+          }
+        }
+      }
+      if (!best && !strict) best = [Math.max(room[0] + 0.4, Math.min(room[1] - 0.4, tx + (i === 0 ? -1.2 : 1.2))), BACK + 0.45];
+      // Turned to watch Goldi.
+      out.push(best ? [best[0], 0, best[1], Math.atan2(tx - best[0], tz - best[1])] : null);
+    });
     return out;
   }
 
@@ -605,6 +644,7 @@ function createReveal(scene, gfx) {
   let list = [];
   let t0 = 0;
   let now = 0;
+  let leftAt = -1;
   const DROP = 0.32;
   const FIRST = 0.45;
   return {
@@ -615,6 +655,9 @@ function createReveal(scene, gfx) {
     /** marks: [{ v, k, face (image|null), color, me }] sorted worst first. */
     set(P, marks, { faces = [] } = {}) {
       group.visible = true;
+      leftAt = -1;
+      group.scale.setScalar(1);
+      group.position.copy(at);
       meter.setBand(P.c0, P.w, Math.min(0.02, P.w / 2));
       meter.snap(P.c0);
       meter.setValue(P.c0);
@@ -654,6 +697,11 @@ function createReveal(scene, gfx) {
     },
     hide() {
       group.visible = false;
+      leftAt = -1;
+    },
+    /** Folds away (up and small) while the camera glides off to the next page. */
+    leave() {
+      if (group.visible && leftAt < 0) leftAt = now;
     },
     /** Seconds since it began. */
     get age() {
@@ -662,6 +710,17 @@ function createReveal(scene, gfx) {
     update(dt, clock) {
       now = clock;
       if (!group.visible) return;
+      if (leftAt >= 0) {
+        const k = Math.min(1, (now - leftAt) / 0.45);
+        const e = k * k * (3 - 2 * k);
+        group.scale.setScalar(Math.max(0.001, 1 - e));
+        group.position.set(at.x, at.y + e * 0.5, at.z);
+        if (k >= 1) {
+          group.visible = false;
+          leftAt = -1;
+          return;
+        }
+      }
       meter.update(dt, clock);
       const age = now - t0;
       list.forEach((m, i) => {
