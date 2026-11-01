@@ -2,7 +2,7 @@
 // particles and the camera. The flow tells it what to show (a page, the title, the lobby table, the reveal, the podium); it
 // keeps the time of the pictures (hit-stop and slow motion bend it, never the page's own clock).
 import * as THREE from 'three';
-import { buildCottage, BACK } from '../world/cottage.js';
+import { buildCottage, BACK, FRONT } from '../world/cottage.js';
 import { createStations } from '../world/stations.js';
 import { createMeter } from '../world/meter.js';
 import { createParticles, SHAPE } from '../gfx/particles.js';
@@ -71,6 +71,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
 
   function setActive(id) {
     if (active) active.group.visible = false;
+    if (active && active.idle) active.idle();
     active = id ? stations[id] : null;
     activeId = id || '';
     if (active) active.group.visible = true;
@@ -89,8 +90,16 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     meter.group.rotation.set(0, m.ry ?? 0, 0);
   }
 
+  /** The aspect framings fit (the director's window on the screen, where it's heading). */
+  let fitAspect = null;
   function framing(f, aspect) {
-    return rig.frame({ target: f.target, from: f.from, radius: f.radius, fov: f.fov ?? 32, aspect });
+    return rig.frame({ target: f.target, from: f.from, radius: f.radius, fov: f.fov ?? 32, aspect: aspect ?? fitAspect ?? undefined });
+  }
+  /** The framing on show (re-fitted when the screen or its window changes). */
+  let shot = null;
+  function goFrame(f, glide) {
+    shot = f;
+    rig.go(framing(f), glide);
   }
 
   // ---------------------------------------------------------------- what to show
@@ -115,7 +124,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     meter.snap(P.page.falls ? 1 : 0);
     meter.setGhost(null);
     lastFrame = active.frame;
-    rig.go(framing(active.frame), glide);
+    goFrame(active.frame, glide);
     rig.sway = 1;
     gfx.focusShadow(new THREE.Vector3(...active.frame.target), Math.max(2.5, active.frame.radius * 2.2));
     gfx.setTilt(0);
@@ -126,7 +135,14 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
   function showTitle({ glide = 0 } = {}) {
     mode = 'title';
     setActive(null);
-    rig.go(rig.frame({ target: [0.2, 1.05, -0.3], from: [0.02, 0.2, 1], radius: 6.2, fov: 30 }), glide);
+    hideSeats();
+    for (const b of Object.values(bears)) b.group.visible = false;
+    reveal.hide();
+    // Goldi on the path to the front door, looking at the cottage.
+    me.group.visible = true;
+    me.place(-1.4, -0.3, 3.1, 0.25);
+    me.play(ANIM.wave, { then: ANIM.idle });
+    goFrame({ target: [0.2, 1.05, -0.3], from: [0.02, 0.2, 1], radius: 6.2, fov: 30 }, glide);
     rig.sway = 2.5;
     gfx.focusShadow(new THREE.Vector3(0, 0, -0.5), 11);
   }
@@ -148,6 +164,32 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
   }
   function hideSeats() {
     for (const ch of seatPool.values()) ch.group.visible = false;
+  }
+  function seatHat(ch, id) {
+    if ((ch.hatId ?? '') === id) return;
+    if (ch.hatMesh) ch.hatMesh.parent?.remove(ch.hatMesh);
+    ch.hatMesh = null;
+    ch.hatId = id;
+    if (id) {
+      try {
+        ch.hatMesh = attachHat(ch, makeHat(id), { up: 0.4 });
+      } catch {}
+    }
+  }
+  let lobbyChars = [];
+  const _p = new THREE.Vector3();
+  /** Where the lobby's people's heads are on the screen (px), for their name tags. */
+  function lobbyTags() {
+    if (mode !== 'lobby') return [];
+    const el = gfx.renderer.domElement;
+    const W = el.clientWidth || window.innerWidth;
+    const H = el.clientHeight || window.innerHeight;
+    return lobbyChars.map((ch) => {
+      ch.headAt(_p);
+      _p.y += 0.2;
+      _p.project(camera);
+      return { x: (_p.x * 0.5 + 0.5) * W, y: (-_p.y * 0.5 + 0.5) * H, on: _p.z < 1 };
+    });
   }
 
   // The lobby: around the bears' table. Behind it (seated), at its ends, in front corners (standing).
@@ -171,9 +213,13 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     hideSeats();
     me.group.visible = false;
     for (const b of Object.values(bears)) b.group.visible = false;
+    reveal.hide();
+    lobbyChars = [];
     people.slice(0, 8).forEach((p, i) => {
       const spot = LOBBY_SPOTS[i];
       const ch = p.me ? me : seatChar(`seat${i}`, p.def);
+      if (!p.me) seatHat(ch, p.hat ?? '');
+      lobbyChars.push(ch);
       ch.place(spot.x, 0, spot.z, spot.ry);
       ch.group.visible = true;
       const want = p.ready ? ANIM.yes : spot.sit ? ANIM.sit : ANIM.idle;
@@ -184,7 +230,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
       ch.lastReady = !!p.ready;
       void want;
     });
-    rig.go(rig.frame({ target: [TABLE.x, 0.85, TABLE.z - 0.25], from: [0, 0.42, 1], radius: 1.75, fov: 32 }), glide);
+    goFrame({ target: [TABLE.x, 0.72, TABLE.z - 0.2], from: [0, 0.42, 1], radius: 1.65, fov: 32 }, glide);
     rig.sway = 1.5;
     gfx.focusShadow(new THREE.Vector3(TABLE.x, 0, TABLE.z), 4);
   }
@@ -196,7 +242,9 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     setActive(null);
     meter.group.visible = false;
     reveal.set(P, marks, opts);
-    rig.go(rig.frame({ target: [reveal.at.x, reveal.at.y + 0.1, reveal.at.z], from: [0, 0.1, 1], radius: 1.35, fov: 30 }), 0.7);
+    hideSeats();
+    me.group.visible = false;
+    goFrame({ target: [reveal.at.x, reveal.at.y + 0.1, reveal.at.z], from: [0, 0.1, 1], radius: 1.35, fov: 30 }, 0.7);
     rig.sway = 0.5;
   }
 
@@ -219,6 +267,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     ];
     rows.slice(0, 8).forEach((r, i) => {
       const ch = r.me ? me : seatChar(`seat${i}`, r.def);
+      if (!r.me) seatHat(ch, r.hat ?? '');
       const sp = spots[i];
       ch.place(sp.x, 0, sp.z, sp.ry);
       ch.group.visible = true;
@@ -233,7 +282,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     bears.baby.place(-1.4, 0, -0.75, Math.PI / 2);
     for (const b of Object.values(bears)) b.play(ANIM.walk);
     podiumT = 0;
-    rig.go(rig.frame({ target: [1.9, 0.8, -0.25], from: [0, 0.32, 1], radius: 1.9, fov: 32 }), 1.1);
+    goFrame({ target: [1.9, 0.8, -0.25], from: [0, 0.32, 1], radius: 1.9, fov: 32 }, 1.1);
     rig.sway = 1.2;
     gfx.focusShadow(new THREE.Vector3(1.9, 0, -0.3), 4.5);
   }
@@ -258,23 +307,52 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     if (mode !== 'page' || !active) {
       return;
     }
-    const f = active.frame;
     const list = [bears.papa, bears.mama, bears.baby];
+    const spots = bearSpots(activeId, active.frame);
     for (let i = 0; i < 3; i++) {
       const b = list[i];
       if (i >= bearsHome && !(bearScare && bearScare.i === i)) {
         b.group.visible = false;
         continue;
       }
-      // At the back of the room on show, a little to one side, facing us.
-      const x = f.target[0] + (i - 1) * 0.55 + (i === 0 ? -0.9 : i === 2 ? 0.9 : 0) * 0.5;
-      const z = Math.min(BACK + 0.55 + i * 0.12, f.target[2] - 0.5);
       if (!b.group.visible || b.homeFor !== activeId) {
-        b.place(x, f.target[1] < 0.2 ? -0.3 : 0, z, 0);
+        const [x, y, z, ry] = spots[i];
+        b.place(x, y, z, ry);
         b.homeFor = activeId;
         b.play(ANIM.idle);
       }
     }
+  }
+  /** Where the bears stand when they're home: at the edges of the page's picture, looking on. */
+  const OUTDOOR_BEARS = {
+    jar: [[-10.95, -0.3, 1.65, -0.9], [-10.45, -0.3, 2.45, -0.7], [-10.75, -0.3, 3.2, -0.5]],
+    bell: [[23.05, -0.3, 1.0, -0.8], [23.55, -0.3, 0.2, -0.9], [22.75, -0.3, 1.85, -0.6]],
+    swing: [[10.9, -0.3, 0.2, 0.9], [10.35, -0.3, 0.95, 0.8], [11.15, -0.3, 1.6, 0.6]],
+  };
+  function bearSpots(id, f) {
+    if (OUTDOOR_BEARS[id]) return OUTDOOR_BEARS[id];
+    // Indoors: either side of the page, toward the back, turned to watch it.
+    const [fx, , fz] = f.from;
+    const len = Math.hypot(fx, fz) || 1;
+    const rx = fz / len;
+    const rz = -fx / len;
+    const bx = -fx / len;
+    const bz = -fz / len;
+    const [tx, , tz] = f.target;
+    const out = [];
+    const plan = [
+      [-1, 1.1, 0.35],
+      [1, 1.05, 0.3],
+      [1, 1.45, -0.15],
+    ];
+    for (const [side, spread, back] of plan) {
+      let x = tx + rx * side * f.radius * spread + bx * back;
+      let z = tz + rz * side * f.radius * spread + bz * back;
+      x = Math.max(-9.15, Math.min(8.75, x));
+      z = Math.max(BACK + 0.35, Math.min(FRONT - 0.5, z));
+      out.push([x, 0, z, Math.atan2(tx - x, tz + 1.5 - z) * 0.8]);
+    }
+    return out;
   }
 
   // ---------------------------------------------------------------- the player's look (Wardrobe)
@@ -282,9 +360,17 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
   function setLook(charId, hatId) {
     if (meLook.char !== charId) {
       const def = CHARACTERS[charId] ?? CHARACTERS.goldi;
-      scene.remove(me.group);
-      cast.splice(cast.indexOf(me), 1);
+      const old = me;
+      scene.remove(old.group);
+      cast.splice(cast.indexOf(old), 1);
       me = make(def);
+      // The new one stands where the old one stood, doing what it did.
+      me.group.position.copy(old.group.position);
+      me.group.rotation.copy(old.group.rotation);
+      me.group.visible = old.group.visible;
+      if (old.currentName) me.play(old.currentName, { fade: 0 });
+      const i = lobbyChars.indexOf(old);
+      if (i >= 0) lobbyChars[i] = me;
       hat = null;
     }
     if (meLook.hat !== hatId || !hat) {
@@ -292,6 +378,45 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
       hat = hatId ? attachHat(me, makeHat(hatId), { up: 0.4 }) : null;
     }
     meLook = { char: charId, hat: hatId };
+  }
+
+  // ---------------------------------------------------------------- the Wardrobe: Goldi by the parlour fire, turning to show off
+  let wardT = 0;
+  function showWardrobe({ glide = 0.9 } = {}) {
+    mode = 'wardrobe';
+    setActive(null);
+    hideSeats();
+    reveal.hide();
+    for (const b of Object.values(bears)) b.group.visible = false;
+    me.group.visible = true;
+    me.body.position.set(0, 0, 0);
+    me.place(2.15, 0, -0.55, 0);
+    me.play(ANIM.wave, { then: ANIM.idle });
+    wardT = 0;
+    goFrame({ target: [2.15, 0.36, -0.55], from: [0, 0.18, 1], radius: 0.62, fov: 30 }, glide);
+    rig.sway = 0.6;
+    gfx.focusShadow(new THREE.Vector3(2.15, 0, -0.6), 2.5);
+  }
+  /** The player tried something on: a little hop and a turn. */
+  function admire() {
+    if (mode !== 'wardrobe') return;
+    me.play(ANIM.yes, { then: ANIM.idle });
+    me.jumpUp(1.6);
+    fx.emit(14, 2.15, 0.75, -0.5, { shape: SHAPE.spark, color: [PAL.gold, '#fff6d0'], speed: 1.2, spread: 1.2, size: [0.04, 0.08], life: [0.5, 0.9], drag: 2.5, additive: true, gravity: -0.3 });
+  }
+
+  // ---------------------------------------------------------------- faces (portraits as textures, for the reveal's tokens)
+  const faceCache = new Map();
+  const loader = new THREE.TextureLoader();
+  function faceTexture(url) {
+    if (!url) return null;
+    let t = faceCache.get(url);
+    if (!t) {
+      t = loader.load(url);
+      t.colorSpace = THREE.SRGBColorSpace;
+      faceCache.set(url, t);
+    }
+    return t;
   }
 
   // ---------------------------------------------------------------- frame
@@ -344,6 +469,10 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
         b.jumpUp(2.2);
       }
       if (bearScare.t > 1.2) bearScare = null;
+    }
+    if (mode === 'wardrobe') {
+      wardT += dt;
+      if (!reduced()) me.group.rotation.y = Math.sin(wardT * 0.55) * 0.55;
     }
     if (mode === 'podium') {
       podiumT += dt;
@@ -415,9 +544,35 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     stationFor: (P) => stations[P.bo ? 'bowls' : P.g],
     update,
     frameFor: (f, aspect) => framing(f, aspect),
-    refit() {
-      if (mode === 'page' && active) rig.go(framing(active.frame), 0.3);
+    /** Fit the framing on show again (the screen or its window changed). */
+    refit(glide = 0.3) {
+      if (shot) rig.go(framing(shot), glide);
     },
+    /** Compile every material the pages will need (hidden stations too), so nothing pops in on the first visit. */
+    warm() {
+      const hidden = [];
+      const show = (o) => {
+        if (o && !o.visible) {
+          o.visible = true;
+          hidden.push(o);
+        }
+      };
+      for (const st of Object.values(stations)) if (st && st.group) show(st.group);
+      for (const b of Object.values(bears)) show(b.group);
+      show(meter.group);
+      show(reveal.group);
+      try {
+        gfx.renderer.compile(scene, camera);
+      } catch {}
+      for (const o of hidden) o.visible = false;
+    },
+    setAspect(a) {
+      fitAspect = a;
+    },
+    showWardrobe,
+    admire,
+    lobbyTags,
+    faceTexture,
   };
 }
 

@@ -127,9 +127,28 @@ export function createGfx(canvas, { poster = false } = {}) {
     PR = pr;
     renderer.setPixelRatio(pr);
     renderer.setSize(W, H, false);
-    camera.aspect = W / H;
-    camera.updateProjectionMatrix();
+    applyWindow();
     composer?.setSize(W, H, false);
+  }
+
+  /**
+   * The part of the screen framings fit (0-1 of width and height): the camera's centre and aspect are that rectangle's, and
+   * the rest of the screen shows what lies around it (the lobby's table above the cards, Goldi beside the Wardrobe).
+   */
+  let win = { x: 0, y: 0, w: 1, h: 1 };
+  function applyWindow() {
+    const ww = Math.max(1, win.w * W);
+    const wh = Math.max(1, win.h * H);
+    camera.aspect = ww / wh;
+    if (win.x === 0 && win.y === 0 && win.w === 1 && win.h === 1) camera.clearViewOffset();
+    else camera.setViewOffset(ww, wh, -win.x * W, -win.y * H, W, H);
+    camera.updateProjectionMatrix();
+  }
+  function setWindow(r) {
+    const n = r ?? { x: 0, y: 0, w: 1, h: 1 };
+    if (n.x === win.x && n.y === win.y && n.w === win.w && n.h === win.h) return;
+    win = { x: n.x, y: n.y, w: n.w, h: n.h };
+    applyWindow();
   }
 
   /** Aims the sun's shadow box at a point (the station in view), so a small map stays sharp. */
@@ -156,6 +175,13 @@ export function createGfx(canvas, { poster = false } = {}) {
     },
     setQuality,
     resize,
+    setWindow,
+    get window() {
+      return win;
+    },
+    get size() {
+      return { w: W, h: H };
+    },
     focusShadow,
     /** 0..1: the honey wash of a perfect streak. */
     setGolden(v) {

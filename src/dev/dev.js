@@ -77,8 +77,10 @@ export async function devScene(name, gfx, assets) {
     // dev-page-<id>-<v×100>[-<verdict>][-hat]: a station mid-hold, or just after its verdict.
     const debug = name.includes('.dbg');
     const side = name.includes('.side');
-    const [, , id, vs, k, hat] = name.replace(/\.(dbg|side)/g, '').split('-');
+    const bearsN = Number(/\.b(\d)/.exec(name)?.[1] ?? 0);
+    const [, , id, vs, k, hat] = name.replace(/\.(dbg|side|b\d)/g, '').split('-');
     const world = createWorld(gfx, assets, {});
+    world.setBearsHome(bearsN);
     world.setQuality(gfx.quality);
     if (hat) world.setLook('goldi', hat);
     const raw = id === 'bowls' ? { ...practicePage('porridge', 0), bo: 2 } : practicePage(id, 0);

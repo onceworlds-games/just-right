@@ -83,6 +83,7 @@ export function fit(obj, { h, w, d, s } = {}) {
   const box = new THREE.Box3().setFromObject(obj);
   const size = box.getSize(new THREE.Vector3());
   const k = h ? h / size.y : w ? w / size.x : d ? d / size.z : 1;
+  if (!Number.isFinite(k) || k <= 0) return obj;
   obj.scale.multiplyScalar(k);
   return obj;
 }
@@ -91,6 +92,10 @@ export function fit(obj, { h, w, d, s } = {}) {
 export function seat(obj, x, y, z) {
   obj.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(obj);
+  if (box.isEmpty()) {
+    obj.position.set(x, y, z);
+    return obj;
+  }
   const c = box.getCenter(new THREE.Vector3());
   obj.position.x += x - c.x;
   obj.position.z += z - c.z;

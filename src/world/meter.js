@@ -19,7 +19,7 @@ const GLASS_FRAG = /* glsl */ `
 uniform vec3 tint; uniform float glow;
 varying vec3 vN; varying vec3 vV;
 void main() {
-  float f = pow(1.0 - abs(dot(vN, vV)), 2.2);
+  float f = pow(clamp(1.0 - abs(dot(normalize(vN), normalize(vV))), 0.0, 1.0), 2.2);
   float spec = smoothstep(0.82, 0.98, abs(vN.x * 0.6 + vN.y * 0.3 + 0.2));
   vec3 c = tint * (0.25 + f * 1.2) + vec3(1.0) * spec * 0.9;
   gl_FragColor = vec4(c, 0.10 + f * 0.55 + spec * 0.5);

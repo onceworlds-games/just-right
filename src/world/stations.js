@@ -105,11 +105,15 @@ export function createStations(ctx) {
     g.add(flames);
     const glow = new THREE.PointLight('#ff8a3a', 0, 2.5, 2);
     glow.position.set(-7.85, 1.0, -1.3);
-    g.add(glow);
+    // Always in the scene (at 0 when the stove is off): a light coming and going recompiles every material.
+    perm.add(glow);
     const s = { heat: 0, boil: 0, over: 0, rattle: 0 };
     stations.porridge = {
       id: 'porridge',
       group: g,
+      idle() {
+        glow.intensity = 0;
+      },
       frame: { target: [-7.8, 0.82, -1.35], from: [0.14, 0.36, 1], radius: 1.2 },
       meter: { at: [-7.08, 0, -1.25], s: 0.58 },
       enter() {

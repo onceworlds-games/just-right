@@ -74,8 +74,13 @@ export async function loadAssets(base = './models/', onProgress = () => {}) {
   );
   const [cast, props, nature] = got;
   const byKey = (g) => {
+    // Key by the file's own node names: the loader renames a top-level node whose name an earlier nested node already
+    // took (a cabinet's "door" makes the door itself "door_1").
     const m = new Map();
-    for (const child of g.scene.children) m.set(child.name, child);
+    for (const child of g.scene.children) {
+      const at = g.parser?.associations?.get(child)?.nodes;
+      m.set((at !== undefined && g.parser.json.nodes[at]?.name) || child.name, child);
+    }
     return m;
   };
   const castNodes = byKey(cast);

@@ -15,6 +15,9 @@ export function createCamRig(camera) {
   const to = { pos: new THREE.Vector3(), look: new THREE.Vector3(), fov: 32 };
   let t = 1;
   let dur = 1;
+  /** A long move swings out away from the house (a dollhouse pan) instead of cutting through its walls. */
+  const away = new THREE.Vector3();
+  let swing = 0;
   let fov = 32;
   let trauma = 0;
   let push = 0; // 0..1 slow push-in while holding
@@ -53,6 +56,12 @@ export function createCamRig(camera) {
       to.fov = f.fov ?? fov;
       dur = Math.max(0.0001, seconds);
       t = seconds <= 0 ? 1 : 0;
+      const travel = from.look.distanceTo(to.look);
+      away.subVectors(from.pos, from.look).add(tmp.subVectors(to.pos, to.look));
+      away.y = 0;
+      if (away.lengthSq() < 1e-6) away.set(0, 0, 1);
+      away.normalize();
+      swing = travel > 1.2 ? Math.min(4.5, (travel - 1.2) * 0.6) : 0;
       if (seconds <= 0) {
         pos.copy(to.pos);
         look.copy(to.look);
@@ -92,7 +101,9 @@ export function createCamRig(camera) {
         look.lerpVectors(from.look, to.look, kl);
         // Arc: lift the camera through the middle of a long move.
         const dist = from.pos.distanceTo(to.pos);
-        pos.y += Math.sin(Math.PI * k) * Math.min(1.2, dist * 0.12);
+        const arc = Math.sin(Math.PI * k);
+        pos.y += arc * Math.min(1.2, dist * 0.12);
+        pos.addScaledVector(away, arc * swing);
         fov = from.fov + (to.fov - from.fov) * k;
       }
       pushNow += (push - pushNow) * Math.min(1, dt * 2.2);
