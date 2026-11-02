@@ -1346,7 +1346,8 @@ export function createStations(ctx) {
       table,
       clearsTable: false,
       frame: { target: [-2.65, 0.82, TZ - 0.15], from: [0, 0.38, 1], radius: 1.15 },
-      meter: { at: [-1.75, TOP, TZ - 0.35], s: 0.4 },
+      // On the floor past the table's end, clear of Goldi at the third bowl.
+      meter: { at: [-1.38, 0, TZ - 0.05], s: 0.56 },
       enter(P) {
         s.which = Math.max(0, Math.min(2, (P.bo ?? 1) - 1));
         spot.position.x = xs[s.which];

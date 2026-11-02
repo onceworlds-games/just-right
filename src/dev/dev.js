@@ -85,7 +85,7 @@ export async function devScene(name, gfx, assets) {
     world.setBearsHome(bearsN);
     world.setQuality(gfx.quality);
     if (hat) world.setLook('goldi', hat);
-    const raw = id === 'bowls' ? { ...practicePage('porridge', 0), bo: 2 } : practicePage(id, 0);
+    const raw = id.startsWith('bowls') ? { ...practicePage('porridge', 0), bo: Number(id.slice(5)) || 2 } : practicePage(id, 0);
     const P = readPage(raw);
     world.showPage(P, { glide: 0 });
     const v = Number(vs) / 100;

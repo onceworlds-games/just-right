@@ -72,7 +72,10 @@
 @keyframes stampOut { to { opacity: 0; transform: translate(-50%, -60%) rotate(var(--rot, -6deg)) scale(1.04); } }
 .ink-splat { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--stamp); opacity: 0.8; pointer-events: none; animation: splat 0.6s ease-out forwards; }
 @keyframes splat { 0% { transform: translate(-50%, -50%) scale(0.2); } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6); opacity: 0; } }
-.reduced .stamp.slam { animation: fadeIn 0.2s both; }
+.reduced .stamp.slam,
+.reduced .title .logo .stamp.slam,
+.reduced .count .stamp.slam,
+.reduced .podium .winner .stamp.slam { animation: fadeIn 0.2s both; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* ---------------------------------------------------------------- floating points and honey */
@@ -343,6 +346,7 @@
 .tapon { font: 800 18px/1 'Barlow Condensed'; letter-spacing: 0.14em; text-transform: uppercase; color: var(--paper); -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill; opacity: 0.85; }
 .podium .winner { position: absolute; left: 50%; top: calc(var(--rt) + 14vh); transform: translate(-50%, -50%); text-align: center; }
 .podium .winner .stamp { position: relative; left: auto; top: auto; display: inline-block; transform: rotate(-5deg); --s: clamp(40px, 8vmin, 84px); }
+.podium .winner .stamp.slam { animation: slamInline 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) 0.35s both; }
 .podium .winner .who { margin-top: 10px; font: 900 clamp(26px, 4.4vmin, 40px) / 1 'Fraunces', serif; color: var(--paper); -webkit-text-stroke: 7px var(--ink); paint-order: stroke fill; }
 
 /* Toasts: a rank, a task, a new best. */

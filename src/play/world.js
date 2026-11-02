@@ -283,7 +283,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     bears.baby.place(-1.4, 0, -0.75, Math.PI / 2);
     for (const b of Object.values(bears)) b.play(ANIM.walk);
     podiumT = 0;
-    goFrame({ target: [1.9, 0.8, -0.25], from: [0, 0.32, 1], radius: 1.9, fov: 32 }, 1.1);
+    goFrame({ target: [1.8, 0.62, -0.5], from: [0.1, 0.28, 1], radius: 1.4, fov: 32 }, 1.1);
     rig.sway = 1.2;
     gfx.focusShadow(new THREE.Vector3(1.9, 0, -0.3), 4.5);
   }
@@ -348,9 +348,13 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
   };
   /**
    * Indoors: searched against the page's own framing, so the bears loom at the edges of the picture, never between the
-   * camera and the page: Papa at one edge, Mama at the other, Baby a little deeper in. A bear with no such place on this
-   * page stays out of the picture (null), except the one arriving, which takes the nearest place there is.
+   * camera and the page (or looming in at the very edge of it), never over Goldi: Papa at one edge, Mama at the other, Baby a
+   * little deeper in. A bear with no such place on this page stays out of the picture (null), except the one arriving, which
+   * takes the nearest place there is.
    */
+  /** Half widths on the floor plan (at CH): Goldi, and a bear of scale 1. */
+  const GOLDI_HALF = 0.42;
+  const BEAR_HALF = 0.42;
   const BEAR_WANT = [
     { sx: -0.95, deeper: 0.15 },
     { sx: 0.95, deeper: 0.15 },
@@ -371,20 +375,35 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     const [tx, , tz] = f.target;
     const tDepth = (tx - fr.pos.x) * _bf.x + (tz - fr.pos.z) * _bf.z;
     const room = Object.values(ROOM).find(([a, b2]) => tx >= a && tx <= b2) ?? [-9.4, 9.0];
+    // Goldi's place on the screen.
+    const g = me.group.position;
+    _bv.set(g.x - fr.pos.x, 0, g.z - fr.pos.z);
+    const gDepth = Math.max(0.5, _bv.dot(_bf));
+    const gx = _bv.dot(_br) / (gDepth * tanH);
+    const gw = GOLDI_HALF / (gDepth * tanH);
     const out = [];
     BEAR_WANT.forEach((want, i) => {
       let best = null;
       let bestScore = Infinity;
       const strict = i !== arriving;
+      const half = BEAR_HALF * ([BEARS.papa, BEARS.mama, BEARS.baby][i].scale ?? 1);
       for (let x = room[0] + 0.45; x <= room[1] - 0.45; x += 0.12) {
         for (let z = BACK + 0.4; z <= FRONT - 0.4; z += 0.12) {
           _bv.set(x - fr.pos.x, 0, z - fr.pos.z);
           const depth = _bv.dot(_bf);
           if (depth < 1) continue;
           const sx = _bv.dot(_br) / (depth * tanH);
+          const hw = half / (depth * tanH);
           const near = Math.hypot(x - tx, z - tz);
-          if (strict && (depth < tDepth + want.deeper || Math.abs(sx) < 0.6 || Math.abs(sx) > 1.2 || near < 0.8)) continue;
-          let score = Math.abs(sx - want.sx) * 3 + Math.max(0, tDepth + want.deeper - depth) * 4 + Math.max(0, 0.9 - near) * 6;
+          // How far its screen box runs into Goldi's (a muddle of ears and paws, even from behind her)...
+          const onGoldi = Math.max(0, hw + gw + 0.03 - Math.abs(sx - gx));
+          // ...and into the middle of the picture, where the page happens.
+          const inner = Math.abs(sx) - hw;
+          const onPage = Math.max(0, 0.22 - inner);
+          // Beside or behind the page; or nearer the camera, looming in from the very edge of the picture.
+          const placed = depth >= tDepth + want.deeper || (Math.abs(sx) >= 0.95 && depth >= 1.3);
+          if (strict && (!placed || Math.abs(sx) < 0.6 || inner > 0.85 || near < 0.8 || onGoldi > 0 || onPage > 0)) continue;
+          let score = Math.abs(sx - want.sx) * 3 + Math.max(0, tDepth + want.deeper - depth) * 4 + Math.max(0, 0.9 - near) * 6 + onGoldi * 5 + onPage * 3;
           for (const o of out) if (o) score += Math.max(0, 0.75 - Math.hypot(x - o[0], z - o[2])) * 8;
           if (score < bestScore) {
             bestScore = score;

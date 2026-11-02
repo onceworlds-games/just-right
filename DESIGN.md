@@ -234,7 +234,8 @@ from the edge of the picture; the third ends the run.
   balloon until it pops; fluffs and flops onto the pillow; blows on a spoon; pours milk from a jug held in both hands while
   standing on a stool; pushes a bowl down the table; swings a honey jar on a crane; hits a strength tester to ring the bell;
   swings from the rope over the pond onto the raft (or into the water).
-- **Characters** blend their clips (crossfades), look at what they're doing, and react: a yes, a no, a stumble, a cheer.
+- **Characters** blend their clips (crossfades), look at what they're doing, blink now and then (sometimes twice), and react: a
+  yes, a no, a stumble, a cheer.
 - **Juice:** hit-stop on stamps and cracks, directional shake, pooled particles (sparkles, crumbs, foam, steam, splashes,
   feathers, splinters, confetti), the camera leaning in while you hold and punching in on a perfect, slow glides with an arc from
   room to room, the reveal tokens dropping in one by one, counts ticking, buttons pressing.
@@ -274,7 +275,8 @@ clear.
   subject on a coloured disc behind a brass rim). Rendered with `_tools/originals/posters.mjs`.
 - `?poster=dev-…` draws development pictures (the cast, a page mid-hold or after its verdict, any camera, the portraits).
 - **Trailer** (`store/trailer.mp4`): real play captured with `?autoplay=1` (the bot brain plays for the local player;
-  `&clumsy=1` for misses), with the game's own sound.
+  `&clumsy=1` for misses, `&solo=run` for Before the Bears, `&from=9` to start a run at page 9, `&short=3` for a three-page
+  story), with the game's own sound. These only work on a local host; `?debug=1` adds the numbers behind the picture.
 
 ## Tech
 
