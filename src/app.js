@@ -1419,6 +1419,8 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
         const marks = revealMarks();
         const P = readPage(m.data);
         revealState = { key: m.roundId, v0: world.vclock, plinks: 0, crowned: false, n: marks.length, P, best: marks[marks.length - 1] ?? null };
+        // The page's stamp goes as the reveal comes (it gets its own).
+        ui.clearStamps();
         if (P) world.showReveal(P, marks.map((mk) => ({ v: mk.v, k: mk.k, color: mk.color, me: mk.me })), { faces: marks.map((mk) => world.faceTexture(mk.portrait)) });
         worldShows = 'reveal';
         sfx('whoosh');
@@ -1442,6 +1444,7 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
     if (phase === 'results') {
       if (!results || results.key !== room.match.id) {
         results = { key: room.match.id };
+        ui.clearStamps();
         const rows = podiumRows();
         world.showPodium(rows.map((r) => ({ def: r.def, hat: r.hat, me: r.me })));
         worldShows = 'podium';
