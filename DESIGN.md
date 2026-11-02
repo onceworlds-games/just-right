@@ -225,7 +225,7 @@ from the edge of the picture; the third ends the run.
 - **Type:** **Fraunces** Black for the name, page titles and numbers; **Barlow Condensed** ExtraBold for labels and the stamp.
   Self-hosted woff2 with their OFL licences.
 - **The signature: the red rubber stamp.** JUST RIGHT!, TOO HOT!, the countdown and the winner are slammed down with a hit-stop
-  and a thump; perfects use the player's own ink.
+  and a thump, inked onto a worn paper label so they read over any scene; perfects use the player's own ink.
 
 ## Animation and feel
 
@@ -235,7 +235,8 @@ from the edge of the picture; the third ends the run.
   standing on a stool; pushes a bowl down the table; swings a honey jar on a crane; hits a strength tester to ring the bell;
   swings from the rope over the pond onto the raft (or into the water).
 - **Characters** blend their clips (crossfades), look at what they're doing, blink now and then (sometimes twice), and react: a
-  yes, a no, a stumble, a cheer.
+  yes, a no, a stumble, a cheer. Their faces act too: eyes shut in a smile (^ ^) for the green, on the podium and in the
+  Wardrobe; screwed shut (> <) for a miss or when a bear bangs through the door; closed if you never pressed.
 - **Juice:** hit-stop on stamps and cracks, directional shake, pooled particles (sparkles, crumbs, foam, steam, splashes,
   feathers, splinters, confetti), the camera leaning in while you hold and punching in on a perfect, slow glides with an arc from
   room to room, the reveal tokens dropping in one by one, counts ticking, buttons pressing.
