@@ -58,7 +58,8 @@
   padding: 0.12em 0.32em 0.16em; border: 0.07em solid currentColor; border-radius: 0.14em;
   box-shadow: inset 0 0 0 0.04em var(--paper), inset 0 0 0 0.075em currentColor;
   -webkit-mask-image: var(--grain); mask-image: var(--grain); -webkit-mask-size: 260px 260px; mask-size: 260px 260px;
-  text-shadow: 0 0 1px currentColor; mix-blend-mode: multiply;
+  /* Inked onto a paper label, so it reads over trees, wallpaper and steam alike. */
+  background: rgba(251, 243, 226, 0.9); text-shadow: 0 0 1px currentColor;
 }
 .stamp.big { --s: clamp(44px, 9vmin, 110px); }
 .stamp.mid { --s: clamp(30px, 6vmin, 70px); }

@@ -15,7 +15,7 @@ export const ordinal = (n) => {
 
 /** A grain mask for the stamp's ink (made once). */
 function grainUrl() {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="260" height="260"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.4 1.75"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="260" height="260"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.3 1.5"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 }
 
