@@ -310,3 +310,14 @@ test('daily tasks: events move them on, never past done', () => {
   assert.equal(oopsOf('balloon', 'pop'), 'pop');
   assert.equal(oopsOf('jar', 'over'), 'smash');
 });
+
+test('a run started later (for capture) picks up at that page, the boss still on the tenth', () => {
+  const run = createRunState(42, { from: 9 });
+  assert.equal(run.state.n, 9);
+  assert.equal(run.state.cleared, 8);
+  assert.equal(run.isBoss(), false);
+  const P = readPage(run.page());
+  run.verdict({ k: 'perfect', s: 100, v: P.c0 });
+  assert.equal(run.isBoss(), true);
+  assert.equal(run.page().bo, 1);
+});

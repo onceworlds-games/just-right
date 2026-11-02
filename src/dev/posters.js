@@ -5,7 +5,7 @@ import { createWorld } from '../play/world.js';
 import { readPage } from '../core/pages.js';
 import { practicePage } from '../core/plan.js';
 import { CHARACTERS, FOLK_LOOKS, BEARS } from '../gfx/palette.js';
-import { ANIM, Character } from '../gfx/cast.js';
+import { ANIM, Character, LIFE } from '../gfx/cast.js';
 import { makeHat } from '../world/hats.js';
 import { makePot, makeBowl, makeLittleChair, makeSpoon } from '../world/props3d.js';
 
@@ -89,6 +89,7 @@ const people = (list) =>
 
 export async function storePoster(name, gfx, assets) {
   seedRandom(7);
+  LIFE.blink = false;
   if (name === 'icon' || name.startsWith('badge-')) return medal(name, gfx, assets);
   const world = createWorld(gfx, assets, { reduced: () => true });
   world.setQuality('high');

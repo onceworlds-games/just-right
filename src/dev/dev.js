@@ -1,7 +1,7 @@
 // Development pictures: ?poster=dev-cast lines up the whole cast; dev-house is the cottage from the front; dev-bears the bears'
 // faces; dev-cam_<x>_<y>_<z>_<tx>_<ty>_<tz> any camera in the house (m for minus).
 import * as THREE from 'three';
-import { Character, ANIM } from '../gfx/cast.js';
+import { Character, ANIM, LIFE } from '../gfx/cast.js';
 import { CHARACTERS, BEARS, FOLK_LOOKS } from '../gfx/palette.js';
 import { buildCottage } from '../world/cottage.js';
 import { createWorld } from '../play/world.js';
@@ -19,6 +19,8 @@ async function settle(gfx, chars, frames = 40) {
 }
 
 export async function devScene(name, gfx, assets) {
+  LIFE.blink = new URLSearchParams(location.search).get('blink') === '1';
+  LIFE.closed = new URLSearchParams(location.search).get('closed') === '1';
   const { scene, camera } = gfx;
   const params = new URLSearchParams(location.search);
   if (name === 'dev-cast') {

@@ -91,12 +91,18 @@ export async function boot() {
 }
 
 async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) {
+  // Capture aids, only on a local platform (never on onceworlds.com, where they would play for a leaderboard):
   // ?autoplay=1: a skilled hand plays for this player (pictures and the trailer); ?solo=run|daily plays that instead of a
-  // story; ?clumsy=1 a careless hand; ?autoplay-to=lobby stops at the table.
-  const autoplay = params.get('autoplay') === '1';
-  const autoSolo = params.get('solo');
-  const AUTO = params.get('clumsy') === '1' ? { skill: 0.3, bias: 380, press: [0.3, 0.6], blunder: 0 } : AUTOPLAY;
-  const autoTo = params.get('autoplay-to');
+  // story; ?clumsy=1 a careless hand; ?autoplay-to=lobby stops at the table; ?from=<page> starts a run there; ?short=<n> a
+  // story of n pages.
+  const localDev = /^(localhost|127\.0\.0\.1|\[::1\])$|\.localhost$/.test(location.hostname);
+  const dev = (k) => (localDev ? params.get(k) : null);
+  const autoplay = dev('autoplay') === '1';
+  const autoSolo = dev('solo');
+  const AUTO = dev('clumsy') === '1' ? { skill: 0.3, bias: 380, press: [0.3, 0.6], blunder: 0 } : AUTOPLAY;
+  const autoTo = dev('autoplay-to');
+  const runFrom = Math.max(1, Math.min(60, Math.floor(Number(dev('from')) || 1)));
+  const shortStory = Math.max(0, Math.min(16, Math.floor(Number(dev('short')) || 0)));
 
   const reduced = () => {
     try {
@@ -432,7 +438,7 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
       score: 0,
       marks: [],
       pageId: opts.pageId ?? null,
-      run: kind === 'run' ? createRunState(seed, { rank: rankOf(profile.xp).i }) : null,
+      run: kind === 'run' ? createRunState(seed, { rank: rankOf(profile.xp).i, from: autoplay ? runFrom : 1 }) : null,
       plan: kind === 'daily' ? dailyPlan(dayNumber()) : null,
       lastScore: null,
     };
@@ -975,7 +981,7 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
     room = r;
     if (!r || !helpers) return;
     try {
-      online = createOnline(r, helpers, { now: () => Date.now() });
+      online = createOnline(r, helpers, { now: () => Date.now(), rounds: autoplay && shortStory >= 2 ? shortStory : null });
     } catch (e) {
       console.error('[just-right] room setup failed', e);
       online = null;

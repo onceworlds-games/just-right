@@ -39,6 +39,9 @@ const _va = new THREE.Vector3();
 const _vb = new THREE.Vector3();
 const ONCE = new Set(['Sword', 'Jump', 'Jump_Land', 'HitReact', 'Death', 'Yes', 'No', 'Wave', 'Punch', 'Sitting_Start', 'Sitting_End', 'Pan_Start', 'Pan_End', 'Chop_Start', 'Chop_End', 'Assembly_Start', 'Assembly_End', 'Duck']);
 
+/** Blinking on (the store art and dev pictures turn it off, so a still never catches closed eyes). */
+export const LIFE = { blink: true, closed: false };
+
 export class Character {
   constructor(assets, kind, look, { scale = 1, name = '' } = {}) {
     this.assets = assets;
@@ -62,10 +65,15 @@ export class Character {
     this.hopV = 0;
     this.head = null;
     this.bones = {};
+    this.eyes = [];
     this.model.traverse((o) => {
       if (o.isBone) this.bones[o.name] = o;
       if (o.isBone && o.name === 'Head') this.head = o;
+      if (o.isMesh && /^Eyes/.test(o.name)) this.eyes.push(o);
     });
+    // Blinks: the eyes close for a few frames every few seconds (now and then twice).
+    this.blinkIn = 1 + Math.random() * 3;
+    this.blinkFor = 0;
     // Three's loader drops the dots: Middle1.R is Middle1R.
     this.handL = this.bones.Middle1L ?? this.bones.LowerArmL ?? null;
     this.handR = this.bones.Middle1R ?? this.bones.LowerArmR ?? null;
@@ -198,6 +206,16 @@ export class Character {
       }
     }
     this.body.position.y = this.hop;
+    if (this.eyes.length) {
+      this.blinkIn -= dt;
+      if (this.blinkIn <= 0 && LIFE.blink) {
+        this.blinkFor = 0.11;
+        this.blinkIn = Math.random() < 0.2 ? 0.22 : 2.2 + Math.random() * 3.5;
+      }
+      this.blinkFor -= dt;
+      const open = (this.blinkFor <= 0 || !LIFE.blink) && !LIFE.closed;
+      if (this.eyes[0].visible !== open) for (const e of this.eyes) e.visible = open;
+    }
     // Head look, added after the mixer wrote the pose.
     this.lookYaw += (this.lookTarget - this.lookYaw) * Math.min(1, dt * 6);
     if (this.head && Math.abs(this.lookYaw) > 0.001) this.head.rotateY(this.lookYaw);

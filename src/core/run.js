@@ -21,7 +21,8 @@ export function runPoints(s, k, streakBefore, fx) {
   return { pts: base + (perfect ? fx.perfectBonus : 0), mult };
 }
 
-export function createRunState(seed, { rank = 0 } = {}) {
+/** from: the page a run starts on (1; later only for capturing a trailer, as if the pages before were cleared). */
+export function createRunState(seed, { rank = 0, from = 1 } = {}) {
   const order = createOrder(seed);
   const st = {
     seed,
@@ -47,6 +48,10 @@ export function createRunState(seed, { rank = 0 } = {}) {
     offer: null,
     over: false,
   };
+  if (from > 1) {
+    st.n = Math.floor(from);
+    st.played = st.cleared = st.n - 1;
+  }
 
   function isBoss(n) {
     return n % BOSS_EVERY === 0;

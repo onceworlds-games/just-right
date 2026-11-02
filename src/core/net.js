@@ -64,7 +64,7 @@ export function createOnline(room, helpers, options = {}) {
   let revealKey = '';
 
   const match = createMatch(room, {
-    rounds: 'pages',
+    rounds: options.rounds ?? 'pages',
     roundSeconds: (INTRO_MS + 8000 + GRACE_MS + 1700) / 1000,
     introSeconds: 0,
     roundEndSeconds: REVEAL_S,
