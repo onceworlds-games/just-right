@@ -276,6 +276,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
       ch.place(sp.x, 0, sp.z, sp.ry);
       ch.group.visible = true;
       if (i === 0) ch.play(ANIM.sit, { fade: 0 }); else ch.play(i < 3 ? ANIM.wave : ANIM.yes, { then: ANIM.idle });
+      ch.feel('happy', i === 0 ? 10 : 1.6);
     });
     // The bears walk in from the dining room.
     bears.papa.place(-0.2, 0, -0.55, Math.PI / 2);
@@ -283,11 +284,15 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
     bears.baby.place(-1.4, 0, -0.75, Math.PI / 2);
     for (const b of Object.values(bears)) b.play(ANIM.walk);
     podiumT = 0;
+    podiumSeat = seat;
+    podiumSpark = 1.1;
     goFrame({ target: [1.8, 0.62, -0.5], from: [0.1, 0.28, 1], radius: 1.4, fov: 32 }, 1.1);
     rig.sway = 1.2;
     gfx.focusShadow(new THREE.Vector3(1.9, 0, -0.3), 4.5);
   }
   let podiumT = 0;
+  let podiumSeat = null;
+  let podiumSpark = 0;
 
   // ---------------------------------------------------------------- the bears coming home (Before the Bears)
   /** How many bears are home (0-3): they stand in the doorway of the room on show, watching. */
@@ -302,6 +307,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
   function bearArrives(i) {
     const b = [bears.papa, bears.mama, bears.baby][i];
     bearScare = { b, t: 0, i };
+    me.feel('ouch', 1.1);
     house.door(0.85, { bang: true });
     sound('growl', { kind: ['papa', 'mama', 'baby'][i] });
     ctx.shake(0.4, 1, 0.6);
@@ -464,6 +470,7 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
   function admire() {
     if (mode !== 'wardrobe') return;
     me.play(ANIM.yes, { then: ANIM.idle });
+    me.feel('happy', 1.2);
     me.jumpUp(1.6);
     fx.emit(14, 2.15, 0.75, -0.5, { shape: SHAPE.spark, color: [PAL.gold, '#fff6d0'], speed: 1.2, spread: 1.2, size: [0.04, 0.08], life: [0.5, 0.9], drag: 2.5, additive: true, gravity: -0.3 });
   }
@@ -550,6 +557,12 @@ export function createWorld(gfx, assets, { sound = () => {}, reduced = () => fal
           b.play(i === 0 ? ANIM.no : i === 1 ? ANIM.wave : ANIM.yes, { then: ANIM.idle });
         }
       });
+      // Gold twinkling round the winner's head for a while.
+      podiumSpark -= dt;
+      if (podiumSeat && podiumSpark <= 0 && podiumT < 7) {
+        podiumSpark = 0.28;
+        fx.emit(3, podiumSeat.x, 0.82, podiumSeat.z, { shape: SHAPE.spark, color: [PAL.gold, '#fff6d0'], speed: 0.8, spread: 1.6, size: [0.04, 0.08], life: [0.6, 1.0], drag: 2, additive: true, gravity: -0.25 });
+      }
       if (podiumT > 1 && podiumT < 1 + dt * 1.5) fx.emit(60, 2.25, 2.2, -0.4, { shape: SHAPE.confetti, color: [PAL.red, PAL.honey, PAL.green, PAL.cold, PAL.cream], speed: 2, spread: 1.4, size: [0.04, 0.07], life: [2, 3], gravity: 1.5, drag: 1.5, spin: 8, wobble: 2, floor: 0.01 });
     }
     reveal.update(dt, vclock);

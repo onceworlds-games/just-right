@@ -325,6 +325,8 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
     const kind = pc.kind;
     try {
       world.stationFor(P).verdict(r, playState(now));
+      // Her face says it too: smiling eyes for the green, screwed shut for a miss, asleep if she never pressed.
+      world.me.feel(r.k === 'perfect' ? 'happy' : inBand(r.k) ? 'happy' : r.k === 'asleep' ? 'shut' : 'ouch', r.k === 'perfect' ? 1.6 : inBand(r.k) ? 0.8 : 1.2);
     } catch (e) {
       console.error(e);
     }
@@ -1748,7 +1750,7 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
       dbgDumped.push(`shadowM ${bad(gfx.sun.shadow.matrix.elements)} sunP ${gfx.sun.position.toArray().map((x) => x.toFixed(1))}`);
       dbgDumped.push(`info calls=${gfx.renderer.info.render.calls} tri=${gfx.renderer.info.render.triangles} progs=${gfx.renderer.info.programs?.length}`);
     }
-    dbg.textContent = (dbgDumped ? dbgDumped.slice(0, 30).join('\n') + '\n' : '') + JSON.stringify({ px: [...px], stamps: document.querySelectorAll('#ui .stamp').length, cam: c.position.toArray().map((x) => +x.toFixed(2)), fov: +c.fov.toFixed(1), asp: +c.aspect.toFixed(3), pm0: +c.projectionMatrix.elements[0].toFixed(3), view: c.view && c.view.enabled ? [c.view.fullWidth, c.view.fullHeight, c.view.offsetX, c.view.offsetY, c.view.width, c.view.height].map((x) => Math.round(x)) : null, win: Object.values(winNow).map((x) => +x.toFixed(3)), golden, mode: world.mode, scr: view(), room: room && { ph: room.match.phase, id: room.match.id, p: !!room.match.paused, host: room.isHost, mp: online?.match.phase, r: online?.match.round, el: Math.round(online?.match.elapsed ?? -1), rid: online?.match.roundId }, st: st && { v: +st.v.toFixed(3), c: +st.c.toFixed(3), w: st.w, k: st.k, since: +st.since.toFixed(2), h: st.holding } });
+    dbg.textContent = (lastFrameError ? `ERR ${lastFrameError}\n` : '') + (dbgDumped ? dbgDumped.slice(0, 30).join('\n') + '\n' : '') + JSON.stringify({ px: [...px], stamps: document.querySelectorAll('#ui .stamp').length, cam: c.position.toArray().map((x) => +x.toFixed(2)), fov: +c.fov.toFixed(1), asp: +c.aspect.toFixed(3), pm0: +c.projectionMatrix.elements[0].toFixed(3), view: c.view && c.view.enabled ? [c.view.fullWidth, c.view.fullHeight, c.view.offsetX, c.view.offsetY, c.view.width, c.view.height].map((x) => Math.round(x)) : null, win: Object.values(winNow).map((x) => +x.toFixed(3)), golden, mode: world.mode, scr: view(), room: room && { ph: room.match.phase, id: room.match.id, p: !!room.match.paused, host: room.isHost, mp: online?.match.phase, r: online?.match.round, el: Math.round(online?.match.elapsed ?? -1), rid: online?.match.roundId }, st: st && { v: +st.v.toFixed(3), c: +st.c.toFixed(3), w: st.w, k: st.k, since: +st.since.toFixed(2), h: st.holding } });
   }
 
   let last = performance.now();
@@ -1758,11 +1760,22 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
     last = t;
     try {
       update(performance.now(), dt);
+    } catch (e) {
+      frameError(e);
+    }
+    // Always draw, even after a bad update: a page that skips a frame's draw can stall the browser's frame clock.
+    try {
       gfx.render(dt);
       debugLine(performance.now());
     } catch (e) {
-      console.error('[just-right] frame', e);
+      frameError(e);
     }
+  }
+  let lastFrameError = '';
+  function frameError(e) {
+    const msg = String((e && (e.stack || e.message)) || e).slice(0, 400);
+    if (msg !== lastFrameError) console.error('[just-right] frame', e);
+    lastFrameError = msg;
   }
 
   // Start drawing now (the title is alive while the room is joined and the save loads).

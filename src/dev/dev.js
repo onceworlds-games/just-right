@@ -21,6 +21,7 @@ async function settle(gfx, chars, frames = 40) {
 export async function devScene(name, gfx, assets) {
   LIFE.blink = new URLSearchParams(location.search).get('blink') === '1';
   LIFE.closed = new URLSearchParams(location.search).get('closed') === '1';
+  LIFE.feel = new URLSearchParams(location.search).get('feel') ?? '';
   const { scene, camera } = gfx;
   const params = new URLSearchParams(location.search);
   if (name === 'dev-cast') {
