@@ -20,9 +20,9 @@ pages.
 
 | Time | Screen | What happens |
 |---|---|---|
-| 0 s | Title | The cottage from the front path at golden hour; Goldi waves at the door; the name is a red rubber stamp. **Play** below it, the rank, honey and today's tasks beside it. |
-| ~3 s | The bears' table (lobby) | The camera glides through the front into the dining room: everyone here sits at the bears' long table in their own look and hat. Before the Bears, the Daily, the Storybook and the Wardrobe are one tap away; the platform's Ready strip is below. |
-| ~6 s | Countdown | Ready (alone, a story starts with the woodland folk): the 3-2-1 is stamped over the table. |
+| 0 s | Title | The cottage from the front path at golden hour; Goldi waves at the door; the name is a red rubber stamp. It shows only while the game loads. |
+| ~3 s | The bears' table (lobby) | Once loaded, the camera glides through the front into the dining room: everyone here sits at the bears' long table in their own look and hat. Before the Bears, the Daily, the Storybook and the Wardrobe are one tap away; the platform's Ready strip is below. |
+| ~6 s | Countdown | Ready (alone, a story starts with the woodland folk): the platform's 3-2-1 over the table, the bears growling along. |
 | ~9 s | Page 1 | Always **Porridge**, gentle. The camera swings into the kitchen; "Page 1 of 12" and "Porridge" slam in; "Hold to heat" with the Space key or a fingertip. |
 | ~10 s | Play | Hold: the flame grows, the pot rattles and bubbles faster, the mercury climbs, a tone rises and chimes inside the band, the camera leans in. |
 | ~13 s | Verdict | Let go: in the green Goldi nods and **JUST RIGHT!** is stamped with a hit-stop and sparkles; too long and the pot boils over (TOO HOT!, foam and steam), too short and she shivers (TOO COLD!). |
@@ -34,7 +34,7 @@ pages.
 | | Keyboard and mouse | Phone and tablet |
 |---|---|---|
 | The action | Hold **Space** (or the left mouse button anywhere) and let go | Hold a finger **anywhere** on the game and lift it |
-| Menus | Click; **Enter** for the main button (Play, Again); **Esc** goes back from a solo screen and pauses a solo run | Tap |
+| Menus | Click; **R** for Again on a solo run's end; **Esc** goes back from a solo screen and pauses a solo run (Enter is the platform's Ready) | Tap |
 
 - No platform stick or buttons: `ow.controls.set(null)` everywhere (the whole screen is the button).
 - One hold per page. A key repeat (`event.repeat`) is ignored; a second press after letting go does nothing.
@@ -44,7 +44,7 @@ pages.
   that ends inside the intro is forgiven.
 - Touch: `touch-action: none`, no text selection, no long-press menu or callout (`-webkit-touch-callout: none`, `contextmenu`
   and `selectstart` prevented), pointer capture on the canvas, so a long hold on a phone is just a hold.
-- `controls` in onceworlds.json: `Space` / `Click` / `Tap`: "Hold, then let go in the green"; `Enter`: "Play, again"; `Esc`: "Back, pause a solo run".
+- `controls` in onceworlds.json: `Space` / `Click` / `Tap`: "Hold, then let go in the green"; `R`: "Again"; `Esc`: "Back, pause a solo run".
 
 ## The core loop and where mastery comes from
 
@@ -105,13 +105,13 @@ the right top on the swing, plays fog by ear, and times the wobble's trough. Sco
 
 ## Multiplayer
 
-- **Public game**, `rooms.join({ maxPlayers: 8, minPlayers: 1, lobby: 'bar', ownCountdown: true, settings: [{ id: 'pages',
+- **Public game**, `rooms.join({ maxPlayers: 8, minPlayers: 1, lobby: 'bar', settings: [{ id: 'pages',
   label: 'Pages', options: [8, 12, 16], default: 12 }] })`. Friends get private servers from the platform. Joined once, on load.
 - **Lobby** (the bears' table in 3D, the platform's Ready/Start strip below): everyone who's here sits at the long table in
   their own look and hat, a name tag over each; Pages (8, 12, 16) for the host (`room.setSetting`, the room clears ready
   flags); empty places offer `ow.ui.showInvite()` in a private server. Public servers start
   on the room's countdown once everyone is ready; private ones wait for the host's Start (`room.canStart`). Joining never starts
-  anything. The title and solo screens call `room.hideLobby()`.
+  anything. The strip stays up on every screen of the lobby phase.
 - **Bots** (`createBots`, `fill: 6`, thinking on the host only) fill seats up to six; up to eight real players. Bots are the
   woodland folk, each a name, a face and a habit: **Ottoline** (sharp, steady), **Fen** (good, a little early), **Corvin** (steady),
   **Hazel** (presses at once, erratic), **Sorrel** (jittery), **Prickle** (eager: lets go early), **Burdock** (slow: late),
@@ -122,8 +122,7 @@ the right top on the swing, plays fog by ear, and times the wobble's trough. Sco
   play at speed 1.0 with w 0.075, the middle third at 1.15 with w 0.06 and a 30% twist chance, the last third at 1.3 with w 0.05
   and always a twist. **The last page is worth double** (the bears are at the door): a player behind can still catch up.
   12 pages ≈ 2 min 10 s with the podium; 8 ≈ 1 min 30; 16 ≈ 2 min 50.
-- **A seated player on the title** (a reload mid-story, or the host started while they were there) goes straight into the
-  story. **Latecomers** watch ("Watching" where the cue would be) and see every reveal. **Leavers** keep their
+- **A seated player reloading mid-story** goes straight into the story. **Latecomers** watch ("Watching" where the cue would be) and see every reveal. **Leavers** keep their
   seat and points (greyed); an away player scores 0 on the pages they miss and plays on when back. **Host change** carries on from
   the match record (`createMatch`); bots re-plan on the new host.
 - **Netcode (who does what):**
@@ -224,7 +223,7 @@ from the edge of the picture; the third ends the run.
   painted on, a ✓ notch), or lying under the sideways pages.
 - **Type:** **Fraunces** Black for the name, page titles and numbers; **Barlow Condensed** ExtraBold for labels and the stamp.
   Self-hosted woff2 with their OFL licences.
-- **The signature: the red rubber stamp.** JUST RIGHT!, TOO HOT!, the countdown and the winner are slammed down with a hit-stop
+- **The signature: the red rubber stamp.** JUST RIGHT!, TOO HOT!, and the winner are slammed down with a hit-stop
   and a thump, inked onto a worn paper label so they read over any scene; perfects use the player's own ink.
 
 ## Animation and feel
@@ -257,7 +256,7 @@ The 3D world fills the screen at every size; the HTML UI floats over it. The cam
 screen the menus leave free (beside the Wardrobe panel, above a phone's lobby cards). The top-left (or `ow.ui.reserved`) stays
 clear.
 
-- **Title:** the cottage from the front path, the stamp, Play, the rank, honey, today's tasks, perfects in the woods today.
+- **Title:** the cottage from the front path, the stamp and the loading bar, only until the game has loaded.
 - **The bears' table:** the lobby (above), with the solo modes beside it (below it on an upright phone).
 - **Page:** "Page 4 of 12" and the page name slammed in, the twist's tag, the cue with the Space key or a fingertip. HUD: the
   page pips (coloured by how each went), the other players' faces (wiggle = holding), the score on a wooden sign, honey, the

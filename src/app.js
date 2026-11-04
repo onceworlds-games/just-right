@@ -425,11 +425,6 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
 
   // ---------------------------------------------------------------- local activities
   function startLocal(kind, opts = {}) {
-    if (room && online) {
-      try {
-        room.setReady(false);
-      } catch {}
-    }
     const seed = (Date.now() ^ (Math.random() * 1e9)) >>> 0;
     ensureTasks();
     local = {
@@ -876,6 +871,10 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
     } catch {}
     if (!press(e.timeStamp)) tap();
   });
+  // A clicked button doesn't keep the focus, or Enter (the platform's Ready) would press it again.
+  document.getElementById('ui').addEventListener('mousedown', (e) => {
+    if (e.target.closest?.('button')) e.preventDefault();
+  });
   const up = (e) => {
     if (pointerDown === null || e.pointerId !== pointerDown) return;
     pointerDown = null;
@@ -906,21 +905,14 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
         press(e.timeStamp);
         return;
       }
-      if (view() === 'title') return startFromTitle();
       if (view() === 'match' && online?.match.phase === 'roundEnd') return tap();
       return;
     }
-    if (e.key === 'Enter') {
-      if (e.repeat) return;
-      startAudio();
-      if (e.target && e.target.tagName === 'BUTTON') return;
-      e.preventDefault();
+    // (Enter is the platform's Ready: nothing here.)
+    if (e.code === 'KeyR' && !e.repeat) {
       const v = view();
-      if (v === 'title') return startFromTitle();
-      if (v === 'match' && online?.match.phase === 'roundEnd') return tap();
       if (v === 'runOver') return startLocal('run');
       if (v === 'dailyOver') return startLocal('daily');
-      if (v === 'local' && paused) return resume();
       return;
     }
     if (e.key === 'Escape') {
@@ -962,10 +954,8 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
     });
   } catch {}
 
-  function startFromTitle() {
-    if (view() !== 'title' || !ready) return;
+  function leaveTitle() {
     startAudio();
-    sfx('click');
     endLocal();
     setScreen('lobby');
     musicCtl.set('menu', 100);
@@ -989,7 +979,6 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
       online = null;
       return;
     }
-    lobbyHidden = null;
     lastPresence = '';
     r.on('error', (e) => console.warn('[just-right] room:', e && e.code, e && e.message));
     r.on('close', (reason) => {
@@ -1010,17 +999,14 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
         endLocal();
       }
       if (screen !== 'title') setScreen('lobby');
-      lobbyHidden = null;
     });
     r.on('matchstart', () => {
-      lobbyHidden = null;
       matchMarks = [];
       matchPerfects = 0;
       streakNow = 0;
       musicCtl.set('play', 112);
     });
     r.on('matchend', () => {
-      lobbyHidden = null;
       revealState = null;
       results = null;
       if (screen !== 'title') musicCtl.set('menu', 100);
@@ -1065,9 +1051,6 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
     if (online && room && room.match && room.match.phase !== 'lobby' && !local) return 'match';
     return screen;
   }
-  let lobbyHidden = null;
-  const wantLobbyHidden = (v) => v !== 'lobby' && v !== 'match';
-
   function soloOk() {
     if (!room || !online) return true;
     // In a private server with friends waiting, the host doesn't wander off.
@@ -1141,7 +1124,7 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
       list = [];
       if (ow) {
         list.push({ kind: 'menu', x: 0, y: 0, w: 150, h: 70 });
-        if (lobbyHidden === false) list.push({ kind: 'lobby', x: 0, y: H - 88, w: W, h: 88 });
+        if (room?.match?.phase === 'lobby') list.push({ kind: 'lobby', x: 0, y: H - 88, w: W, h: 88 });
       }
     }
     const v = { top: 0, right: 0, bottom: 0, left: 0, tlx: 0, tly: 0, trx: 0, try: 0, blx: 0, bly: 0, brx: 0, bry: 0 };
@@ -1230,24 +1213,12 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
         }
       }
     }
-    // Seated in a story that is playing (this page reloaded mid-story): straight in.
-    if (screen === 'title' && room && online && !closed) {
-      try {
-        if (room.isParticipant()) setScreen('lobby');
-      } catch {}
-    }
+    // The title only shows while the game loads: then straight to the table (or into a story under way, after a reload).
+    if (screen === 'title' && ready && !closed && autoTo !== 'title') leaveTitle();
+    // Readying leaves the menus: everyone is at the table for the start.
+    if (room && online && room.me?.ready && (screen === 'book' || screen === 'wardrobe' || screen === 'runOver' || screen === 'dailyOver') && !local) toLobby();
     const v = view();
     const phase = v === 'match' ? online.match.phase : '';
-    if (room && online) {
-      const want = wantLobbyHidden(v);
-      if (want !== lobbyHidden) {
-        lobbyHidden = want;
-        try {
-          room.hideLobby(want);
-        } catch {}
-        applyInsets();
-      }
-    }
     if (v !== lastViewKey.v || phase !== lastViewKey.phase) {
       lastViewKey = { v, phase };
       if (setWindowTarget(windowFor(v, phase)) && worldShowsFor(v, phase) === worldShows) world.refit(0.6);
@@ -1323,7 +1294,6 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
   }
 
   function driveScreens(v, now) {
-    if (v === 'title' && now - screenAt > 1200) return startFromTitle();
     if (autoTo === 'lobby' || !autoplay) return;
     if (v === 'lobby' && now - screenAt > 900) {
       if (autoSolo === 'run' || autoSolo === 'daily') return startLocal(autoSolo);
@@ -1623,12 +1593,12 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
 
   function tagsNow() {
     const pos = world.lobbyTags();
-    return lobbyPeopleNow.map((p, i) => (pos[i] && pos[i].on ? { name: p.name, me: p.me, ready: p.ready, host: p.host, x: pos[i].x, y: pos[i].y } : null)).filter(Boolean);
+    return lobbyPeopleNow.map((p, i) => (pos[i] && pos[i].on ? { name: p.name, me: p.me, host: p.host, x: pos[i].x, y: pos[i].y } : null)).filter(Boolean);
   }
 
   function drawUi(v, phase, now) {
     if (v === 'title') {
-      ui.title({ best: profile.bestRun, touch: lastInputTouch, onPlay: startFromTitle, loading: ready ? 1 : 0.97 });
+      ui.title({ loading: ready ? 1 : 0.97 });
       ui.show('title');
       return;
     }
@@ -1677,11 +1647,9 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
       const m = online.match;
       if (phase === 'countdown' || phase === 'lobby') {
         ui.nametags(tagsNow());
-        ui.count(phase === 'countdown' && m.countdown !== null ? Math.ceil(m.countdown) : 0);
-        ui.show('tags', 'count');
+        ui.show('tags');
         return;
       }
-      ui.count(0);
       if (phase === 'round' || phase === 'intro') {
         ui.hud(hudFor('match'));
         ui.prompt(promptFor('match', now));
@@ -1697,7 +1665,7 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
           const f = seatFace(seat);
           return { id: s.id, name: s.name, img: f.img, color: f.color, place: s.place, points: s.points, gain: last?.points?.[s.id] ?? 0, me: !!seat.me };
         });
-        ui.reveal({ title: P ? P.page.name : '', rows, tap: pressedSeen !== m.roundId && !!m.me, touch: lastInputTouch });
+        ui.reveal({ title: P ? P.page.name : '', rows });
         ui.show('reveal');
         return;
       }
@@ -1781,7 +1749,7 @@ async function game({ ow, gfx, size, joinRoom, joining, helpersP, qualityNow }) 
     lastFrameError = msg;
   }
 
-  // Start drawing now (the title is alive while the room is joined and the save loads).
+  // Start drawing now (the title is alive while the save loads).
   applyInsets();
   setWindowTarget(windowFor('title', ''));
   Object.assign(winNow, winTarget);

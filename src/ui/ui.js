@@ -41,7 +41,6 @@ export function createUi(root, { reduced = () => false, sound = () => {} } = {})
     wardrobe: layer('screen wardrobe'),
     pause: layer('screen pause'),
     closed: layer('screen closed'),
-    count: layer('screen countdown'),
   };
   const fx = layer('fx');
   const toasts = layer('toasts');
@@ -102,15 +101,14 @@ export function createUi(root, { reduced = () => false, sound = () => {} } = {})
   }
 
   // ---------------------------------------------------------------- title
-  function title({ best = 0, onPlay, touch = false, loading = 1 }) {
+  /** Shows only while the game loads: it has nothing to press. */
+  function title({ loading = 1 }) {
     const pct = Math.round(Math.max(0, Math.min(1, loading)) * 100);
-    const btn = loading < 1 ? `<button class="btn loading" disabled style="--k:${pct}%">${pct}%</button>` : `<button class="btn" data-act="play">Play${touch ? '' : ' <span class="key">Enter</span>'}</button>`;
     put(
       'title',
-      `t:${best}:${touch}:${pct}`,
+      `t:${pct}`,
       `<div class="logo"><div class="stamp slam">Just Right</div><div class="tag">Before the bears come home</div></div>
-<div class="play">${btn}${best > 0 && loading >= 1 ? `<div class="best">Best ${commas(best)}</div>` : ''}</div>`,
-      { play: () => onPlay?.() },
+<div class="play">${loading < 1 ? `<button class="btn loading" disabled style="--k:${pct}%">${pct}%</button>` : ''}</div>`,
     );
   }
 
@@ -161,7 +159,7 @@ ${pages}`;
       }
       t.hidden = false;
       if (t.textContent !== p.name) t.textContent = p.name;
-      t.className = `nametag${p.me ? ' me' : ''}${p.ready ? ' ready' : ''}${p.host ? ' host' : ''}`;
+      t.className = `nametag${p.me ? ' me' : ''}${p.host ? ' host' : ''}`;
       t.style.left = `${p.x}px`;
       t.style.top = `${p.y}px`;
     });
@@ -467,20 +465,13 @@ ${pages}`;
     );
   }
 
-  // ---------------------------------------------------------------- countdown, reveal, podium
-  let countN = -1;
-  function count(n) {
-    if (n === countN) return;
-    countN = n;
-    put('count', `n:${n}`, n > 0 ? `<div class="count"><div class="stamp slam">${n}</div></div>` : '');
-  }
-
-  /** d: { title, rows: [{ id, name, img, color, place, points, gain, me }], tap (show the hint) } */
+  // ---------------------------------------------------------------- reveal, podium
+  /** d: { title, rows: [{ id, name, img, color, place, points, gain, me }] } */
   function reveal(d) {
     const rows = d.rows
       .map((r, i) => `<div class="s${r.me ? ' me' : ''}" style="animation-delay:${0.05 * i}s">${headHtml(r)}<span class="pl">${ordinal(r.place)}</span><span>${esc(r.name)}</span><b>${commas(r.points)}</b>${r.gain > 0 ? `<span class="gn">+${r.gain}</span>` : ''}</div>`)
       .join('');
-    put('reveal', JSON.stringify(d), `<div class="revtitle">${esc(d.title)}</div><div class="revfoot"><div class="standings">${rows}</div>${d.tap ? `<div class="tapon">${d.touch ? 'Tap' : 'Space'} to go on</div>` : ''}</div>`);
+    put('reveal', JSON.stringify(d), `<div class="revtitle">${esc(d.title)}</div><div class="revfoot"><div class="standings">${rows}</div></div>`);
   }
 
   function podium(d) {
@@ -530,7 +521,6 @@ ${pages}`;
     closed,
     book,
     wardrobe,
-    count,
     reveal,
     podium,
     toast,

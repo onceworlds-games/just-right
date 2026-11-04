@@ -75,7 +75,6 @@
 @keyframes splat { 0% { transform: translate(-50%, -50%) scale(0.2); } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6); opacity: 0; } }
 .reduced .stamp.slam,
 .reduced .title .logo .stamp.slam,
-.reduced .count .stamp.slam,
 .reduced .podium .winner .stamp.slam { animation: fadeIn 0.2s both; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -243,7 +242,6 @@
 .lobby.tall .woods { top: calc(var(--rt) + 70px); }
 .nametag { position: absolute; transform: translate(-50%, -100%); padding: 3px 8px; border-radius: 8px; background: rgba(29, 36, 64, 0.85); color: var(--paper); font: 800 15px/1 'Barlow Condensed'; letter-spacing: 0.04em; white-space: nowrap; pointer-events: none; border: 2px solid transparent; }
 .nametag.me { border-color: var(--red); }
-.nametag.ready { background: var(--moss); }
 .nametag.host::before { content: '★ '; color: var(--honey); }
 
 /* Cards on a scrim: run over, daily, pause, closed, charms. */
@@ -330,9 +328,6 @@
 .wardrobe .foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 
 /* Countdown */
-.count { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); pointer-events: none; }
-.count .stamp { --s: clamp(90px, 22vmin, 220px); position: relative; left: auto; top: auto; transform: rotate(-6deg); }
-.count .stamp.slam { animation: slamInline 0.4s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
 
 /* Reveal and podium */
 .standings { position: absolute; left: 50%; bottom: calc(var(--rb) + 14px); transform: translateX(-50%); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: min(96vw, 900px); pointer-events: none; }
@@ -344,7 +339,6 @@
 .revtitle { position: absolute; left: 50%; top: calc(var(--rt) + 16px); transform: translateX(-50%); font: 900 clamp(28px, 5vmin, 44px) / 1 'Fraunces', serif; color: var(--paper); -webkit-text-stroke: 7px var(--ink); paint-order: stroke fill; white-space: nowrap; }
 .revfoot { position: absolute; left: 50%; bottom: calc(var(--rb) + 14px); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(96vw, 900px); pointer-events: none; }
 .revfoot .standings { position: static; transform: none; width: 100%; }
-.tapon { font: 800 18px/1 'Barlow Condensed'; letter-spacing: 0.14em; text-transform: uppercase; color: var(--paper); -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill; opacity: 0.85; }
 .podium .winner { position: absolute; left: 50%; top: calc(var(--rt) + 14vh); transform: translate(-50%, -50%); text-align: center; }
 .podium .winner .stamp { position: relative; left: auto; top: auto; display: inline-block; transform: rotate(-5deg); --s: clamp(40px, 8vmin, 84px); }
 .podium .winner .stamp.slam { animation: slamInline 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) 0.35s both; }

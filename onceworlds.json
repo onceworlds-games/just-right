@@ -23,9 +23,9 @@
     },
     {
       "keys": [
-        "Enter"
+        "R"
       ],
-      "action": "Play, again"
+      "action": "Again"
     },
     {
       "keys": [

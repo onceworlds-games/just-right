@@ -21,7 +21,6 @@ export const JOIN_OPTIONS = {
   maxPlayers: 8,
   minPlayers: 1,
   lobby: 'bar',
-  ownCountdown: true,
   settings: [{ id: 'pages', label: 'Pages', options: MATCH_LENGTHS, default: 12 }],
 };
 
